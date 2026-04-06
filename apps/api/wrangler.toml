@@ -13,7 +13,7 @@ RESEND_API_KEY = ""
 [[d1_databases]]
 binding = "DB"
 database_name = "viberstreet-db"
-database_id = "placeholder-change-in-production"
+database_id = "1f333eaf-79d8-47ef-85d7-07f73a5ef248"
 
 [[r2_buckets]]
 binding = "R2"
