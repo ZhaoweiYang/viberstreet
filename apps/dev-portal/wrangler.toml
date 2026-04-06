@@ -1,8 +1,3 @@
 name = "viberstreet-dev-portal"
 compatibility_date = "2024-05-01"
 pages_build_output_dir = "./dist"
-
-[env.production]
-routes = [
-  { pattern = "dev.viberstreet.com/*", zone_name = "viberstreet.com" }
-]
