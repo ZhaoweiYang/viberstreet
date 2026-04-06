@@ -1,0 +1,19 @@
+{
+  "name": "viberstreet",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:api": "cd apps/api && npm run dev",
+    "dev:web": "cd apps/web && npm run dev",
+    "dev:admin": "cd apps/admin && npm run dev",
+    "dev:dev-portal": "cd apps/dev-portal && npm run dev",
+    "build:api": "cd apps/api && npm run build",
+    "build:web": "cd apps/web && npm run build",
+    "build:admin": "cd apps/admin && npm run build",
+    "build:dev-portal": "cd apps/dev-portal && npm run build",
+    "db:migrate": "cd apps/api && npx wrangler d1 execute viberstreet-db --local --file=./schema.sql"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2"
+  }
+}

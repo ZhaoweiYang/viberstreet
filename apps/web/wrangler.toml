@@ -1,0 +1,9 @@
+name = "viberstreet-web"
+compatibility_date = "2024-05-01"
+pages_build_output_dir = "./dist"
+
+[env.production]
+routes = [
+  { pattern = "viberstreet.com/*", zone_name = "viberstreet.com" },
+  { pattern = "www.viberstreet.com/*", zone_name = "viberstreet.com" }
+]
