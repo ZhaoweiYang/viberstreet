@@ -1,6 +1,6 @@
 const BASE_URL =
   import.meta.env.PROD
-    ? 'https://api.viberstreet.com'
+    ? 'https://viberstreet-api.cf-0de.workers.dev'
     : 'http://localhost:8787';
 
 interface FetchOptions extends RequestInit {
