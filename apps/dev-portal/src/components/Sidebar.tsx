@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
+import { useI18n } from '../lib/i18n';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: DashboardIcon },
@@ -56,6 +58,7 @@ export default function Sidebar() {
             <p className="text-xs text-indigo-300 truncate">{user?.email}</p>
           </div>
         </div>
+        <div className="mb-2"><LanguageSwitcher /></div>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-2 px-4 py-2 text-sm text-indigo-200 hover:text-white hover:bg-indigo-900 rounded transition-colors"

@@ -30,10 +30,10 @@ devRoutes.get('/products', async (c) => {
 devRoutes.post('/products', async (c) => {
   const user = c.get('user');
   const body = await c.req.json();
-  const { name, description, category, price = 0, version, changelog = '', doc_content } = body;
+  const { name, description, platform, product_type, price = 0, version, changelog = '', doc_content } = body;
 
-  if (!name || !description || !category || !doc_content || !version) {
-    return c.json({ success: false, error: 'Missing required fields: name, description, category, version, doc_content' }, 400);
+  if (!name || !description || !platform || !product_type || !doc_content || !version) {
+    return c.json({ success: false, error: 'Missing required fields: name, description, platform, product_type, version, doc_content' }, 400);
   }
 
   const productId = generateId();
@@ -48,9 +48,9 @@ devRoutes.post('/products', async (c) => {
 
   // Create product
   await c.env.DB.prepare(`
-    INSERT INTO products (id, developer_id, name, slug, description, category, price, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, 'draft')
-  `).bind(productId, user.sub, name, slug, description, category, price).run();
+    INSERT INTO products (id, developer_id, name, slug, description, platform, product_type, price, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'draft')
+  `).bind(productId, user.sub, name, slug, description, platform, product_type, price).run();
 
   // Create first version
   await c.env.DB.prepare(`
@@ -114,7 +114,7 @@ devRoutes.put('/products/:id', async (c) => {
   const updates: string[] = [];
   const values: unknown[] = [];
 
-  for (const field of ['name', 'description', 'category', 'price', 'avatar_url']) {
+  for (const field of ['name', 'description', 'platform', 'product_type', 'price', 'avatar_url']) {
     if (body[field] !== undefined) {
       updates.push(`${field} = ?`);
       values.push(body[field]);

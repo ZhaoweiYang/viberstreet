@@ -9,9 +9,10 @@ type Variables = { user: JWTPayload };
 
 export const productRoutes = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-// List published products (public) - with category filter and search
+// List published products (public) - with platform + product_type filter and search
 productRoutes.get('/', async (c) => {
-  const category = c.req.query('category');
+  const platform = c.req.query('platform');
+  const productType = c.req.query('product_type');
   const search = c.req.query('search');
   const page = parseInt(c.req.query('page') || '1');
   const limit = parseInt(c.req.query('limit') || '20');
@@ -20,9 +21,14 @@ productRoutes.get('/', async (c) => {
   let where = "WHERE p.status = 'published' AND p.current_version_id IS NOT NULL";
   const params: string[] = [];
 
-  if (category) {
-    where += ' AND p.category = ?';
-    params.push(category);
+  if (platform) {
+    where += ' AND p.platform = ?';
+    params.push(platform);
+  }
+
+  if (productType) {
+    where += ' AND p.product_type = ?';
+    params.push(productType);
   }
 
   if (search) {
@@ -184,15 +190,36 @@ productRoutes.get('/:slug/purchase-status', requireAuth, async (c) => {
   });
 });
 
-// Get categories with counts
-productRoutes.get('/meta/categories', async (c) => {
-  const categories = await c.env.DB.prepare(`
-    SELECT category, COUNT(*) as count
+// Get platform counts
+productRoutes.get('/meta/platforms', async (c) => {
+  const platforms = await c.env.DB.prepare(`
+    SELECT platform, COUNT(*) as count
     FROM products
     WHERE status = 'published' AND current_version_id IS NOT NULL
-    GROUP BY category
+    GROUP BY platform
     ORDER BY count DESC
   `).all();
 
-  return c.json({ success: true, data: categories.results || [] });
+  return c.json({ success: true, data: platforms.results || [] });
+});
+
+// Get product type counts (optionally filtered by platform)
+productRoutes.get('/meta/product-types', async (c) => {
+  const platform = c.req.query('platform');
+  let sql = `
+    SELECT product_type, COUNT(*) as count
+    FROM products
+    WHERE status = 'published' AND current_version_id IS NOT NULL
+  `;
+  const params: string[] = [];
+
+  if (platform) {
+    sql += ' AND platform = ?';
+    params.push(platform);
+  }
+
+  sql += ' GROUP BY product_type ORDER BY count DESC';
+
+  const types = await c.env.DB.prepare(sql).bind(...params).all();
+  return c.json({ success: true, data: types.results || [] });
 });

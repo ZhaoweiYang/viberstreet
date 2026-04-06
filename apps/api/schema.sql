@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS products (
   slug TEXT UNIQUE NOT NULL,
   avatar_url TEXT,
   description TEXT NOT NULL,
-  category TEXT NOT NULL CHECK(category IN ('web-app','mobile-app','desktop-app','api-service','cli-tool','browser-extension','ai-agent','saas','game','other')),
+  platform TEXT NOT NULL CHECK(platform IN ('web','ios','android','macos','windows')),
+  product_type TEXT NOT NULL CHECK(product_type IN ('browser','vpn','input-method','finance','office','erp','web3-wallet','email-client')),
   price INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'published', 'unpublished')),
   current_version_id TEXT,
@@ -75,7 +76,8 @@ CREATE TABLE IF NOT EXISTS verification_codes (
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_products_developer ON products(developer_id);
-CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+CREATE INDEX IF NOT EXISTS idx_products_platform ON products(platform);
+CREATE INDEX IF NOT EXISTS idx_products_product_type ON products(product_type);
 CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
 CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
 CREATE INDEX IF NOT EXISTS idx_versions_product ON product_versions(product_id);

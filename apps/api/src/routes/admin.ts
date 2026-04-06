@@ -80,7 +80,7 @@ adminRoutes.get('/reviews', async (c) => {
   ).bind(status).first<{ count: number }>();
 
   const versions = await c.env.DB.prepare(`
-    SELECT pv.*, p.name as product_name, p.slug as product_slug, p.category,
+    SELECT pv.*, p.name as product_name, p.slug as product_slug, p.platform, p.product_type,
            u.name as developer_name, u.email as developer_email
     FROM product_versions pv
     JOIN products p ON pv.product_id = p.id
@@ -102,7 +102,7 @@ adminRoutes.get('/reviews/:versionId', async (c) => {
   const versionId = c.req.param('versionId');
 
   const version = await c.env.DB.prepare(`
-    SELECT pv.*, p.name as product_name, p.slug as product_slug, p.category, p.price,
+    SELECT pv.*, p.name as product_name, p.slug as product_slug, p.platform, p.product_type, p.price,
            p.description, p.avatar_url, u.name as developer_name, u.email as developer_email
     FROM product_versions pv
     JOIN products p ON pv.product_id = p.id

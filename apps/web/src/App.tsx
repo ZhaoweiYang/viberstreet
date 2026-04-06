@@ -15,7 +15,9 @@ export default function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/category/:category" element={<CategoryPage />} />
+          <Route path="/browse" element={<CategoryPage />} />
+          <Route path="/browse/:platform" element={<CategoryPage />} />
+          <Route path="/browse/:platform/:productType" element={<CategoryPage />} />
           <Route path="/product/:slug" element={<ProductPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/my-purchases" element={<MyPurchasesPage />} />

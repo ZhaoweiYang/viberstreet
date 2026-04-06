@@ -5,42 +5,55 @@ export type ProductStatus = 'draft' | 'published' | 'unpublished';
 
 export type VersionStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'revoked';
 
-export type ProductCategory =
-  | 'web-app'
-  | 'mobile-app'
-  | 'desktop-app'
-  | 'api-service'
-  | 'cli-tool'
-  | 'browser-extension'
-  | 'ai-agent'
-  | 'saas'
-  | 'game'
-  | 'other';
+// ========== Two-level Categories ==========
+export type Platform = 'web' | 'ios' | 'android' | 'macos' | 'windows';
 
-export const CATEGORY_LABELS: Record<ProductCategory, string> = {
-  'web-app': 'Web App',
-  'mobile-app': 'Mobile App',
-  'desktop-app': 'Desktop App',
-  'api-service': 'API & Service',
-  'cli-tool': 'CLI Tool',
-  'browser-extension': 'Browser Extension',
-  'ai-agent': 'AI Agent',
-  'saas': 'SaaS',
-  'game': 'Game',
-  'other': 'Other',
+export type ProductType =
+  | 'browser'
+  | 'vpn'
+  | 'input-method'
+  | 'finance'
+  | 'office'
+  | 'erp'
+  | 'web3-wallet'
+  | 'email-client';
+
+export const PLATFORM_LABELS: Record<Platform, string> = {
+  'web': 'Web',
+  'ios': 'iOS',
+  'android': 'Android',
+  'macos': 'macOS',
+  'windows': 'Windows',
 };
 
-export const CATEGORY_ICONS: Record<ProductCategory, string> = {
-  'web-app': '🌐',
-  'mobile-app': '📱',
-  'desktop-app': '🖥️',
-  'api-service': '⚡',
-  'cli-tool': '⌨️',
-  'browser-extension': '🧩',
-  'ai-agent': '🤖',
-  'saas': '☁️',
-  'game': '🎮',
-  'other': '📦',
+export const PLATFORM_ICONS: Record<Platform, string> = {
+  'web': '🌐',
+  'ios': '🍎',
+  'android': '🤖',
+  'macos': '💻',
+  'windows': '🪟',
+};
+
+export const PRODUCT_TYPE_LABELS: Record<ProductType, string> = {
+  'browser': 'Browser',
+  'vpn': 'VPN',
+  'input-method': 'Input Method',
+  'finance': 'Finance',
+  'office': 'Office',
+  'erp': 'ERP',
+  'web3-wallet': 'Web3 Wallet',
+  'email-client': 'Email Client',
+};
+
+export const PRODUCT_TYPE_ICONS: Record<ProductType, string> = {
+  'browser': '🌍',
+  'vpn': '🔒',
+  'input-method': '⌨️',
+  'finance': '💰',
+  'office': '📄',
+  'erp': '🏢',
+  'web3-wallet': '💎',
+  'email-client': '📧',
 };
 
 // ========== Database Models ==========
@@ -62,7 +75,8 @@ export interface Product {
   slug: string;
   avatar_url: string | null;
   description: string;
-  category: ProductCategory;
+  platform: Platform;
+  product_type: ProductType;
   price: number; // in cents, 0 = free
   status: ProductStatus;
   current_version_id: string | null;
@@ -117,7 +131,8 @@ export interface ProductDetail extends ProductWithDeveloper {
 export interface CreateProductRequest {
   name: string;
   description: string;
-  category: ProductCategory;
+  platform: Platform;
+  product_type: ProductType;
   price: number;
   version: string;
   changelog: string;
@@ -127,7 +142,8 @@ export interface CreateProductRequest {
 export interface UpdateProductRequest {
   name?: string;
   description?: string;
-  category?: ProductCategory;
+  platform?: Platform;
+  product_type?: ProductType;
   price?: number;
 }
 
