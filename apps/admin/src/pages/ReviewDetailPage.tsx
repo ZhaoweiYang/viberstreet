@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useI18n } from '../lib/i18n';
 import { getReviewDetail, reviewVersion } from '../lib/api';
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useI18n();
   const styles: Record<string, string> = {
     pending: 'bg-amber-100 text-amber-700',
     approved: 'bg-emerald-100 text-emerald-700',
@@ -10,10 +12,10 @@ function StatusBadge({ status }: { status: string }) {
     revoked: 'bg-rose-200 text-rose-800',
   };
   const labels: Record<string, string> = {
-    pending: 'Pending Review',
-    approved: 'Approved',
-    rejected: 'Rejected',
-    revoked: 'Revoked',
+    pending: t('reviews.tab_pending'),
+    approved: t('reviews.tab_approved'),
+    rejected: t('reviews.tab_rejected'),
+    revoked: t('reviews.tab_revoked'),
   };
   return (
     <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${styles[status] || 'bg-slate-100 text-slate-600'}`}>
@@ -23,6 +25,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function ReviewDetailPage() {
+  const { t } = useI18n();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [detail, setDetail] = useState<any>(null);
@@ -51,7 +54,7 @@ export default function ReviewDetailPage() {
     const note = status === 'rejected' ? rejectNote : status === 'revoked' ? revokeNote : undefined;
 
     if (status === 'rejected' && !rejectNote.trim()) {
-      setActionError('Please provide a reason for rejection.');
+      setActionError(t('review_detail.rejection_reason'));
       return;
     }
 
@@ -92,7 +95,7 @@ export default function ReviewDetailPage() {
       <div className="text-center py-12">
         <p className="text-red-500 mb-4">{error || 'Review not found'}</p>
         <Link to="/reviews" className="text-rose-600 hover:text-rose-700 text-sm font-medium">
-          Back to reviews
+          {t('common.back')}
         </Link>
       </div>
     );
@@ -117,8 +120,8 @@ export default function ReviewDetailPage() {
           </svg>
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-slate-900">Review: {detail.product_name || detail.name}</h1>
-          <p className="text-sm text-slate-500 mt-1">Version {detail.version} submission review</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t('review_detail.title')}: {detail.product_name || detail.name}</h1>
+          <p className="text-sm text-slate-500 mt-1">{t('reviews.version')} {detail.version}</p>
         </div>
         <StatusBadge status={reviewStatus} />
       </div>
@@ -140,25 +143,29 @@ export default function ReviewDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Product Info */}
           <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Product Information</h2>
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('review_detail.product_info')}</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Name</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{t('products.name')}</p>
                 <p className="text-sm font-medium text-slate-900">{detail.product_name || detail.name}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Developer</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{t('reviews.developer')}</p>
                 <p className="text-sm text-slate-700">{detail.developer_name || detail.developer}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Category</p>
-                <p className="text-sm text-slate-700 capitalize">{detail.category || '-'}</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{t('reviews.platform')}</p>
+                <p className="text-sm text-slate-700">{detail.platform ? t(`platform.${detail.platform}`) : '-'}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Price</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{t('reviews.product_type')}</p>
+                <p className="text-sm text-slate-700">{detail.product_type ? t(`product_type.${detail.product_type}`) : '-'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{t('products.price')}</p>
                 <p className="text-sm text-slate-700">
                   {detail.is_free || detail.price_cents === 0
-                    ? 'Free'
+                    ? t('products.free')
                     : `$${((detail.price_cents || 0) / 100).toFixed(2)}`}
                 </p>
               </div>
@@ -167,15 +174,15 @@ export default function ReviewDetailPage() {
 
           {/* Version Info */}
           <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Version Details</h2>
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('review_detail.version_details')}</h2>
             <div className="space-y-4">
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Version</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{t('reviews.version')}</p>
                 <p className="text-sm font-mono text-slate-900">v{detail.version}</p>
               </div>
               {(detail.changelog || detail.change_log) && (
                 <div>
-                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Changelog</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{t('review_detail.changelog')}</p>
                   <div className="text-sm text-slate-700 bg-slate-50 rounded-lg p-4 whitespace-pre-wrap">
                     {detail.changelog || detail.change_log}
                   </div>
@@ -183,7 +190,7 @@ export default function ReviewDetailPage() {
               )}
               {detail.submitted_at && (
                 <div>
-                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Submitted</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{t('reviews.submitted')}</p>
                   <p className="text-sm text-slate-700">
                     {new Date(detail.submitted_at).toLocaleString()}
                   </p>
@@ -195,7 +202,7 @@ export default function ReviewDetailPage() {
           {/* Documentation Content */}
           {detail.doc_content && (
             <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Documentation Content</h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('review_detail.documentation')}</h2>
               <div className="max-h-96 overflow-y-auto bg-slate-50 rounded-lg p-4 border border-slate-200">
                 <div className="prose prose-sm prose-slate max-w-none whitespace-pre-wrap text-sm text-slate-700 leading-relaxed">
                   {detail.doc_content}
@@ -208,7 +215,7 @@ export default function ReviewDetailPage() {
           {screenshots.length > 0 && (
             <div className="bg-white rounded-xl border border-slate-200 p-6">
               <h2 className="text-lg font-semibold text-slate-900 mb-4">
-                Screenshots ({screenshots.length})
+                {t('review_detail.screenshots')} ({screenshots.length})
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {screenshots.map((url: string, i: number) => (
@@ -236,7 +243,7 @@ export default function ReviewDetailPage() {
           {/* Review History */}
           {reviewHistory.length > 0 && (
             <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Review History</h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('review_detail.review_note')}</h2>
               <div className="space-y-4">
                 {reviewHistory.map((entry: any, i: number) => (
                   <div key={i} className="flex gap-3">
@@ -257,7 +264,7 @@ export default function ReviewDetailPage() {
                       </div>
                       {entry.reviewer_name && (
                         <p className="text-xs text-slate-500 mt-1">
-                          by {entry.reviewer_name}
+                          {t('review_detail.reviewed_by')} {entry.reviewer_name}
                         </p>
                       )}
                       {entry.note && (
@@ -276,7 +283,7 @@ export default function ReviewDetailPage() {
         {/* Sidebar - Review Actions */}
         <div className="space-y-6">
           <div className="bg-white rounded-xl border border-slate-200 p-6 sticky top-8">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Review Actions</h2>
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('reviews.actions')}</h2>
 
             {isPending && (
               <div className="space-y-3">
@@ -289,7 +296,7 @@ export default function ReviewDetailPage() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Approve Version
+                  {t('review_detail.approve')}
                 </button>
 
                 {/* Reject */}
@@ -301,15 +308,15 @@ export default function ReviewDetailPage() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    Reject Version
+                    {t('review_detail.reject')}
                   </button>
                 ) : (
                   <div className="border border-red-200 rounded-lg p-4 bg-red-50">
-                    <p className="text-sm font-medium text-red-800 mb-2">Rejection Reason</p>
+                    <p className="text-sm font-medium text-red-800 mb-2">{t('review_detail.rejection_reason')}</p>
                     <textarea
                       value={rejectNote}
                       onChange={(e) => setRejectNote(e.target.value)}
-                      placeholder="Explain why this version is being rejected..."
+                      placeholder={t('review_detail.rejection_reason')}
                       rows={4}
                       className="w-full px-3 py-2 border border-red-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
                     />
@@ -319,7 +326,7 @@ export default function ReviewDetailPage() {
                         disabled={actionLoading}
                         className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
                       >
-                        {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
+                        {actionLoading ? t('review_detail.submitting') : t('review_detail.reject')}
                       </button>
                       <button
                         onClick={() => {
@@ -340,7 +347,7 @@ export default function ReviewDetailPage() {
             {isApproved && (
               <div className="space-y-3">
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                  <p className="text-sm text-emerald-700">This version has been approved.</p>
+                  <p className="text-sm text-emerald-700">{t('reviews.tab_approved')}</p>
                 </div>
 
                 {/* Revoke */}
@@ -352,18 +359,18 @@ export default function ReviewDetailPage() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                     </svg>
-                    Revoke Approval
+                    {t('review_detail.revoke')}
                   </button>
                 ) : (
                   <div className="border border-rose-300 rounded-lg p-4 bg-rose-50">
-                    <p className="text-sm font-medium text-rose-800 mb-1">Revoke Approval</p>
+                    <p className="text-sm font-medium text-rose-800 mb-1">{t('review_detail.revoke')}</p>
                     <p className="text-xs text-rose-600 mb-3">
-                      This will auto-unpublish the product if it is currently published.
+                      {t('review_detail.revoke_confirm')}
                     </p>
                     <textarea
                       value={revokeNote}
                       onChange={(e) => setRevokeNote(e.target.value)}
-                      placeholder="Reason for revoking (e.g., policy violation)..."
+                      placeholder={t('review_detail.review_note')}
                       rows={3}
                       className="w-full px-3 py-2 border border-rose-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent resize-none"
                     />
@@ -373,7 +380,7 @@ export default function ReviewDetailPage() {
                         disabled={actionLoading}
                         className="flex-1 px-3 py-2 bg-rose-800 text-white rounded-lg text-sm font-medium hover:bg-rose-900 transition-colors disabled:opacity-50"
                       >
-                        {actionLoading ? 'Revoking...' : 'Confirm Revoke'}
+                        {actionLoading ? t('review_detail.submitting') : t('review_detail.revoke')}
                       </button>
                       <button
                         onClick={() => {
@@ -396,7 +403,7 @@ export default function ReviewDetailPage() {
                 reviewStatus === 'rejected' ? 'bg-red-50 border border-red-200' : 'bg-rose-50 border border-rose-200'
               }`}>
                 <p className={`text-sm ${reviewStatus === 'rejected' ? 'text-red-700' : 'text-rose-700'}`}>
-                  This version has been {reviewStatus}.
+                  {reviewStatus === 'rejected' ? t('reviews.tab_rejected') : t('reviews.tab_revoked')}
                 </p>
               </div>
             )}
@@ -420,13 +427,13 @@ export default function ReviewDetailPage() {
               )}
               {detail.download_count !== undefined && (
                 <div>
-                  <dt className="text-xs text-slate-500">Downloads</dt>
+                  <dt className="text-xs text-slate-500">{t('products.downloads')}</dt>
                   <dd className="text-sm text-slate-700 mt-0.5">{detail.download_count.toLocaleString()}</dd>
                 </div>
               )}
               {detail.created_at && (
                 <div>
-                  <dt className="text-xs text-slate-500">Product Created</dt>
+                  <dt className="text-xs text-slate-500">{t('products.created')}</dt>
                   <dd className="text-sm text-slate-700 mt-0.5">
                     {new Date(detail.created_at).toLocaleDateString()}
                   </dd>

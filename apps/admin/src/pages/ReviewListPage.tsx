@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useI18n } from '../lib/i18n';
 import { getReviews } from '../lib/api';
 
-const tabs = [
-  { key: 'pending', label: 'Pending Review', color: 'amber' },
-  { key: 'approved', label: 'Approved', color: 'emerald' },
-  { key: 'rejected', label: 'Rejected', color: 'red' },
-  { key: 'revoked', label: 'Revoked', color: 'rose' },
-];
-
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useI18n();
   const styles: Record<string, string> = {
     pending: 'bg-amber-100 text-amber-700',
     approved: 'bg-emerald-100 text-emerald-700',
@@ -17,10 +12,10 @@ function StatusBadge({ status }: { status: string }) {
     revoked: 'bg-rose-200 text-rose-800',
   };
   const labels: Record<string, string> = {
-    pending: 'Pending',
-    approved: 'Approved',
-    rejected: 'Rejected',
-    revoked: 'Revoked',
+    pending: t('reviews.tab_pending'),
+    approved: t('reviews.tab_approved'),
+    rejected: t('reviews.tab_rejected'),
+    revoked: t('reviews.tab_revoked'),
   };
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-600'}`}>
@@ -30,10 +25,18 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function ReviewListPage() {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState('pending');
   const [reviews, setReviews] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const tabs = [
+    { key: 'pending', label: t('reviews.tab_pending'), color: 'amber' },
+    { key: 'approved', label: t('reviews.tab_approved'), color: 'emerald' },
+    { key: 'rejected', label: t('reviews.tab_rejected'), color: 'red' },
+    { key: 'revoked', label: t('reviews.tab_revoked'), color: 'rose' },
+  ];
 
   useEffect(() => {
     setLoading(true);
@@ -52,8 +55,7 @@ export default function ReviewListPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Review Queue</h1>
-        <p className="text-sm text-slate-500 mt-1">Review and manage product version submissions</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t('reviews.title')}</h1>
       </div>
 
       {/* Tabs */}
@@ -84,7 +86,7 @@ export default function ReviewListPage() {
             <svg className="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            <p className="text-slate-500 text-sm">No {activeTab} reviews found.</p>
+            <p className="text-slate-500 text-sm">{t('reviews.no_reviews')}</p>
           </div>
         ) : (
           <>
@@ -95,25 +97,28 @@ export default function ReviewListPage() {
               <thead>
                 <tr className="bg-slate-50">
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    Product
+                    {t('reviews.product')}
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    Version
+                    {t('reviews.version')}
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    Developer
+                    {t('reviews.developer')}
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    Category
+                    {t('reviews.platform')}
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    Submitted
+                    {t('reviews.product_type')}
                   </th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    Status
+                    {t('reviews.submitted')}
+                  </th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                    {t('reviews.status')}
                   </th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    Actions
+                    {t('reviews.actions')}
                   </th>
                 </tr>
               </thead>
@@ -136,8 +141,13 @@ export default function ReviewListPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-600 capitalize">
-                        {review.category || '-'}
+                      <span className="text-sm text-slate-600">
+                        {review.platform ? t(`platform.${review.platform}`) : '-'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-slate-600">
+                        {review.product_type ? t(`product_type.${review.product_type}`) : '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -155,7 +165,7 @@ export default function ReviewListPage() {
                         to={`/reviews/${review.version_id || review.id}`}
                         className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-md transition-colors"
                       >
-                        Review
+                        {t('reviews.review')}
                       </Link>
                     </td>
                   </tr>

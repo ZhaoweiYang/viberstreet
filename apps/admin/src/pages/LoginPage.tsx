@@ -1,10 +1,12 @@
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
+import { useI18n } from '../lib/i18n';
 import { sendCode, verifyCode, googleAuth } from '../lib/api';
 
 export default function LoginPage() {
   const { user, login, error: authError } = useAuth();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -61,11 +63,11 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold text-white">
             <span className="text-rose-500">Viber</span>Street
           </h1>
-          <p className="text-slate-400 mt-2">Admin Panel</p>
+          <p className="text-slate-400 mt-2">{t('login.subtitle')}</p>
         </div>
 
         <div className="bg-white rounded-xl shadow-xl p-8">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">Sign in to Admin</h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">{t('login.title')}</h2>
 
           {displayError && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
@@ -77,7 +79,7 @@ export default function LoginPage() {
             <form onSubmit={handleSendCode} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
-                  Email address
+                  {t('login.email')}
                 </label>
                 <input
                   id="email"
@@ -94,7 +96,7 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full bg-rose-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-rose-700 transition-colors disabled:opacity-50"
               >
-                {loading ? 'Sending...' : 'Send Login Code'}
+                {loading ? t('review_detail.submitting') : t('login.send_code')}
               </button>
             </form>
           ) : (
@@ -104,7 +106,7 @@ export default function LoginPage() {
               </p>
               <div>
                 <label htmlFor="code" className="block text-sm font-medium text-slate-700 mb-1">
-                  Verification code
+                  {t('login.verification_code')}
                 </label>
                 <input
                   id="code"
@@ -122,7 +124,7 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full bg-rose-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-rose-700 transition-colors disabled:opacity-50"
               >
-                {loading ? 'Verifying...' : 'Sign In'}
+                {loading ? t('review_detail.submitting') : t('login.verify')}
               </button>
               <button
                 type="button"
@@ -133,7 +135,7 @@ export default function LoginPage() {
                 }}
                 className="w-full text-sm text-slate-500 hover:text-slate-700"
               >
-                Use a different email
+                {t('common.back')}
               </button>
             </form>
           )}
@@ -170,12 +172,12 @@ export default function LoginPage() {
                   fill="#EA4335"
                 />
               </svg>
-              Sign in with Google
+              {t('login.google')}
             </button>
           </div>
 
           <p className="mt-6 text-center text-xs text-slate-400">
-            Only administrators can access this panel.
+            {t('login.admin_only')}
           </p>
         </div>
       </div>

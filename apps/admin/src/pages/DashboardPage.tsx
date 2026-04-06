@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useI18n } from '../lib/i18n';
 import { getStats, getReviews } from '../lib/api';
 
 interface Stats {
@@ -10,6 +11,7 @@ interface Stats {
 }
 
 export default function DashboardPage() {
+  const { t } = useI18n();
   const [stats, setStats] = useState<Stats | null>(null);
   const [pendingReviews, setPendingReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,14 +36,14 @@ export default function DashboardPage() {
 
   const statCards = [
     {
-      label: 'Total Products',
+      label: t('dashboard.total_products'),
       value: stats?.totalProducts ?? 0,
       icon: ProductIcon,
       color: 'bg-blue-50 text-blue-600',
       iconBg: 'bg-blue-100',
     },
     {
-      label: 'Pending Reviews',
+      label: t('dashboard.pending_reviews'),
       value: stats?.pendingReviews ?? 0,
       icon: ReviewIcon,
       color: 'bg-amber-50 text-amber-600',
@@ -49,14 +51,14 @@ export default function DashboardPage() {
       link: '/reviews',
     },
     {
-      label: 'Total Users',
+      label: t('dashboard.total_users'),
       value: stats?.totalUsers ?? 0,
       icon: UsersIcon,
       color: 'bg-emerald-50 text-emerald-600',
       iconBg: 'bg-emerald-100',
     },
     {
-      label: 'Total Revenue',
+      label: t('dashboard.total_revenue'),
       value: `$${((stats?.totalRevenue ?? 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
       icon: RevenueIcon,
       color: 'bg-rose-50 text-rose-600',
@@ -67,8 +69,7 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-sm text-slate-500 mt-1">Platform overview and quick actions</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t('dashboard.title')}</h1>
       </div>
 
       {/* Stats Cards */}
@@ -101,14 +102,14 @@ export default function DashboardPage() {
         {/* Pending Reviews */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200">
           <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">Pending Reviews</h2>
+            <h2 className="text-lg font-semibold text-slate-900">{t('dashboard.recent_pending')}</h2>
             <Link to="/reviews" className="text-sm text-rose-600 hover:text-rose-700 font-medium">
-              View all
+              {t('dashboard.view_all_reviews')}
             </Link>
           </div>
           {pendingReviews.length === 0 ? (
             <div className="p-6 text-center text-slate-400 text-sm">
-              No pending reviews. All caught up!
+              {t('dashboard.no_pending')}
             </div>
           ) : (
             <div className="divide-y divide-slate-100">
@@ -137,7 +138,7 @@ export default function DashboardPage() {
                       : ''}
                   </div>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-                    Pending
+                    {t('reviews.tab_pending')}
                   </span>
                 </Link>
               ))}
@@ -158,7 +159,7 @@ export default function DashboardPage() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
-              Review pending submissions
+              {t('sidebar.review_queue')}
             </Link>
             <Link
               to="/products"
@@ -167,7 +168,7 @@ export default function DashboardPage() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
-              Browse all products
+              {t('sidebar.products')}
             </Link>
             <Link
               to="/users"
@@ -176,7 +177,7 @@ export default function DashboardPage() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
-              Manage users
+              {t('sidebar.users')}
             </Link>
           </div>
         </div>

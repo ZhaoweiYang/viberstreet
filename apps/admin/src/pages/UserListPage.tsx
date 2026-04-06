@@ -1,28 +1,40 @@
 import React, { useEffect, useState } from 'react';
+import { useI18n } from '../lib/i18n';
 import { getUsers, updateUserRole } from '../lib/api';
 
-const roles = ['user', 'developer', 'admin'];
-
 function RoleBadge({ role }: { role: string }) {
+  const { t } = useI18n();
   const styles: Record<string, string> = {
     admin: 'bg-rose-100 text-rose-700',
     developer: 'bg-blue-100 text-blue-700',
     user: 'bg-slate-100 text-slate-600',
   };
+  const labels: Record<string, string> = {
+    admin: t('users.role_admin'),
+    developer: t('users.role_developer'),
+    user: t('users.role_user'),
+  };
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[role] || 'bg-slate-100 text-slate-600'}`}>
-      {role.charAt(0).toUpperCase() + role.slice(1)}
+      {labels[role] || role}
     </span>
   );
 }
 
 export default function UserListPage() {
+  const { t } = useI18n();
   const [users, setUsers] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const roles = [
+    { value: 'user', label: t('users.role_user') },
+    { value: 'developer', label: t('users.role_developer') },
+    { value: 'admin', label: t('users.role_admin') },
+  ];
 
   const fetchUsers = (p: number) => {
     setLoading(true);
@@ -61,8 +73,7 @@ export default function UserListPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Users</h1>
-        <p className="text-sm text-slate-500 mt-1">Manage platform users and roles</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t('users.title')}</h1>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -75,7 +86,7 @@ export default function UserListPage() {
             <svg className="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
-            <p className="text-slate-500 text-sm">No users found.</p>
+            <p className="text-slate-500 text-sm">{t('users.no_users')}</p>
           </div>
         ) : (
           <>
@@ -87,19 +98,19 @@ export default function UserListPage() {
                 <thead>
                   <tr className="bg-slate-50">
                     <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                      User
+                      {t('users.name')}
                     </th>
                     <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                      Email
+                      {t('users.email')}
                     </th>
                     <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                      Current Role
+                      {t('users.role')}
                     </th>
                     <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                      Joined
+                      {t('users.joined')}
                     </th>
                     <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                      Change Role
+                      {t('users.role')}
                     </th>
                   </tr>
                 </thead>
@@ -143,8 +154,8 @@ export default function UserListPage() {
                           className="px-3 py-1.5 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent disabled:opacity-50"
                         >
                           {roles.map((r) => (
-                            <option key={r} value={r}>
-                              {r.charAt(0).toUpperCase() + r.slice(1)}
+                            <option key={r.value} value={r.value}>
+                              {r.label}
                             </option>
                           ))}
                         </select>
@@ -159,7 +170,7 @@ export default function UserListPage() {
             {totalPages > 1 && (
               <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
                 <p className="text-sm text-slate-500">
-                  Page {page} of {totalPages}
+                  {t('common.page')} {page} {t('common.of')} {totalPages}
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -167,14 +178,14 @@ export default function UserListPage() {
                     disabled={page <= 1}
                     className="px-3 py-1.5 text-sm border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    Previous
+                    {t('common.previous')}
                   </button>
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page >= totalPages}
                     className="px-3 py-1.5 text-sm border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    Next
+                    {t('common.next')}
                   </button>
                 </div>
               </div>

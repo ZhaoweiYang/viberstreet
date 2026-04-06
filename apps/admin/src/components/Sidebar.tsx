@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
+import { useI18n } from '../lib/i18n';
 import { getStats } from '../lib/api';
 import LanguageSwitcher from './LanguageSwitcher';
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: DashboardIcon },
-  { to: '/reviews', label: 'Review Queue', icon: ReviewIcon, badge: true },
-  { to: '/products', label: 'Products', icon: ProductIcon },
-  { to: '/users', label: 'Users', icon: UsersIcon },
-];
-
 export default function Sidebar() {
   const { user, logout } = useAuth();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [pendingCount, setPendingCount] = useState(0);
+
+  const navItems = [
+    { to: '/', label: t('sidebar.dashboard'), icon: DashboardIcon },
+    { to: '/reviews', label: t('sidebar.review_queue'), icon: ReviewIcon, badge: true },
+    { to: '/products', label: t('sidebar.products'), icon: ProductIcon },
+    { to: '/users', label: t('sidebar.users'), icon: UsersIcon },
+  ];
 
   useEffect(() => {
     getStats()
@@ -77,7 +79,7 @@ export default function Sidebar() {
           className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded transition-colors"
         >
           <LogoutIcon />
-          Logout
+          {t('sidebar.logout')}
         </button>
       </div>
     </aside>
