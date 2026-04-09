@@ -53,16 +53,16 @@ export function getPurchaseStatus(slug: string) {
 }
 
 // ========== Auth ==========
-export function sendCode(email: string, type = 'login') {
-  return request<any>('/auth/send-code', { method: 'POST', body: JSON.stringify({ email, type }) });
+export function sendCode(email: string) {
+  return request<any>('/auth/send-code', { method: 'POST', body: JSON.stringify({ email, portal: 'user' }) });
 }
 
-export function verifyCode(email: string, code: string, name?: string, role?: string) {
-  return request<any>('/auth/verify-code', { method: 'POST', body: JSON.stringify({ email, code, name, role }) });
+export function verifyCode(email: string, code: string, name?: string) {
+  return request<any>('/auth/verify-code', { method: 'POST', body: JSON.stringify({ email, code, name, portal: 'user' }) });
 }
 
-export function googleAuth(credential: string, role = 'user') {
-  return request<any>('/auth/google', { method: 'POST', body: JSON.stringify({ credential, role }) });
+export function googleAuth(credential: string) {
+  return request<any>('/auth/google', { method: 'POST', body: JSON.stringify({ credential, portal: 'user' }) });
 }
 
 export function getMe() {

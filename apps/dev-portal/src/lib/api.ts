@@ -95,23 +95,23 @@ export interface DevStats {
 
 // Auth
 export function sendCode(email: string) {
-  return request<{ message: string }>('/api/auth/send-code', {
+  return request<{ message: string }>('/auth/send-code', {
     method: 'POST',
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, portal: 'developer' }),
   });
 }
 
 export function verifyCode(email: string, code: string, name?: string) {
-  return request<{ token: string; user: User }>('/api/auth/verify-code', {
+  return request<{ token: string; user: User }>('/auth/verify-code', {
     method: 'POST',
-    body: JSON.stringify({ email, code, name, role: 'developer' }),
+    body: JSON.stringify({ email, code, name, portal: 'developer' }),
   });
 }
 
 export function googleAuth(credential: string) {
-  return request<{ token: string; user: User }>('/api/auth/google', {
+  return request<{ token: string; user: User }>('/auth/google', {
     method: 'POST',
-    body: JSON.stringify({ credential, role: 'developer' }),
+    body: JSON.stringify({ credential, portal: 'developer' }),
   });
 }
 

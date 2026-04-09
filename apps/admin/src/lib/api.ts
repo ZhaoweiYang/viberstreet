@@ -39,25 +39,18 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json();
 }
 
-// Auth
+// Auth - admin portal: no registration, no Google login
 export function sendCode(email: string) {
   return request<{ message: string }>('/auth/send-code', {
     method: 'POST',
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, portal: 'admin' }),
   });
 }
 
 export function verifyCode(email: string, code: string) {
   return request<{ token: string; user: any }>('/auth/verify-code', {
     method: 'POST',
-    body: JSON.stringify({ email, code }),
-  });
-}
-
-export function googleAuth(credential: string) {
-  return request<{ token: string; user: any }>('/auth/google', {
-    method: 'POST',
-    body: JSON.stringify({ credential }),
+    body: JSON.stringify({ email, code, portal: 'admin' }),
   });
 }
 

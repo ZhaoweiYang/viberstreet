@@ -16,7 +16,6 @@ export default function LoginPage() {
   const [tab, setTab] = useState<Tab>('signin');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('user');
   const [code, setCode] = useState('');
   const [codeSent, setCodeSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,7 +42,7 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      const res: any = await verifyCode(email, code, tab === 'signup' ? name : undefined, tab === 'signup' ? role : undefined);
+      const res: any = await verifyCode(email, code, tab === 'signup' ? name : undefined);
       const data = res.data || res;
       login(data.token, data.user);
       navigate(redirect, { replace: true });
@@ -81,22 +80,10 @@ export default function LoginPage() {
           {!codeSent ? (
             <form onSubmit={handleSendCode} className="space-y-4">
               {tab === 'signup' && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('login.name')}</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} required={tab === 'signup'} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition" />
-                  </div>
-                  <div>
-                    <div className="flex gap-2">
-                      <button type="button" onClick={() => setRole('user')} className={`flex-1 py-2.5 text-sm font-medium rounded-xl border transition ${role === 'user' ? 'border-purple-300 bg-purple-50 text-purple-700' : 'border-gray-200 bg-gray-50 text-gray-600'}`}>
-                        {t('login.role_user')}
-                      </button>
-                      <button type="button" onClick={() => setRole('developer')} className={`flex-1 py-2.5 text-sm font-medium rounded-xl border transition ${role === 'developer' ? 'border-purple-300 bg-purple-50 text-purple-700' : 'border-gray-200 bg-gray-50 text-gray-600'}`}>
-                        {t('login.role_developer')}
-                      </button>
-                    </div>
-                  </div>
-                </>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('login.name')}</label>
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} required={tab === 'signup'} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition" />
+                </div>
               )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('login.email')}</label>

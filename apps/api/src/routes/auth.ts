@@ -10,10 +10,24 @@ export const authRoutes = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 // Send verification code to email
 authRoutes.post('/send-code', async (c) => {
-  const { email, type = 'login' } = await c.req.json<{ email: string; type?: string }>();
+  const { email, type = 'login', portal = 'user' } = await c.req.json<{
+    email: string;
+    type?: string;
+    portal?: string; // 'user' | 'developer' | 'admin'
+  }>();
 
   if (!email || !email.includes('@')) {
     return c.json({ success: false, error: 'Valid email required' }, 400);
+  }
+
+  // Admin portal: no registration allowed, must be existing admin
+  if (portal === 'admin') {
+    const existing = await c.env.DB.prepare(
+      "SELECT id FROM users WHERE email = ? AND role = 'admin'"
+    ).bind(email).first();
+    if (!existing) {
+      return c.json({ success: false, error: 'Admin account not found' }, 403);
+    }
   }
 
   // Generate 6-digit code
@@ -42,11 +56,11 @@ authRoutes.post('/send-code', async (c) => {
 
 // Verify code and login/register
 authRoutes.post('/verify-code', async (c) => {
-  const { email, code, name, role = 'user' } = await c.req.json<{
+  const { email, code, name, portal = 'user' } = await c.req.json<{
     email: string;
     code: string;
     name?: string;
-    role?: string;
+    portal?: string; // 'user' | 'developer' | 'admin'
   }>();
 
   // Verify code
@@ -61,18 +75,28 @@ authRoutes.post('/verify-code', async (c) => {
   // Delete used code
   await c.env.DB.prepare('DELETE FROM verification_codes WHERE email = ?').bind(email).run();
 
-  // Find or create user
-  let user = await c.env.DB.prepare('SELECT * FROM users WHERE email = ?').bind(email).first();
+  // Determine the role based on portal
+  const portalRole = portal === 'developer' ? 'developer' : portal === 'admin' ? 'admin' : 'user';
 
-  if (!user) {
+  // Find existing user with matching email AND role
+  let user = await c.env.DB.prepare(
+    'SELECT * FROM users WHERE email = ? AND role = ?'
+  ).bind(email, portalRole).first();
+
+  if (portal === 'admin') {
+    // Admin: must already exist, no registration
+    if (!user) {
+      return c.json({ success: false, error: 'Admin account not found' }, 403);
+    }
+    await c.env.DB.prepare('UPDATE users SET email_verified = 1 WHERE id = ?').bind(user.id).run();
+  } else if (!user) {
+    // User or Developer: auto-register with the correct role
     const id = generateId();
-    const userRole = role === 'developer' ? 'developer' : 'user';
     await c.env.DB.prepare(
       'INSERT INTO users (id, email, name, role, email_verified) VALUES (?, ?, ?, ?, 1)'
-    ).bind(id, email, name || email.split('@')[0], userRole).run();
+    ).bind(id, email, name || email.split('@')[0], portalRole).run();
     user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
   } else {
-    // Mark email verified
     await c.env.DB.prepare('UPDATE users SET email_verified = 1 WHERE id = ?').bind(user.id).run();
   }
 
@@ -98,7 +122,11 @@ authRoutes.post('/verify-code', async (c) => {
 
 // Google OAuth callback
 authRoutes.post('/google', async (c) => {
-  const { credential, role = 'user' } = await c.req.json<{ credential: string; role?: string }>();
+  const { credential, portal = 'user' } = await c.req.json<{ credential: string; portal?: string }>();
+
+  if (portal === 'admin') {
+    return c.json({ success: false, error: 'Admin accounts cannot use Google login' }, 403);
+  }
 
   // Verify Google token
   const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
@@ -107,18 +135,19 @@ authRoutes.post('/google', async (c) => {
   }
 
   const googleUser = await googleRes.json() as { sub: string; email: string; name: string; picture: string };
+  const portalRole = portal === 'developer' ? 'developer' : 'user';
 
-  // Find or create user
+  // Find existing user with matching google_id AND role, or email AND role
   let user = await c.env.DB.prepare(
-    'SELECT * FROM users WHERE google_id = ? OR email = ?'
-  ).bind(googleUser.sub, googleUser.email).first();
+    'SELECT * FROM users WHERE (google_id = ? OR email = ?) AND role = ?'
+  ).bind(googleUser.sub, googleUser.email, portalRole).first();
 
   if (!user) {
+    // Auto-register with the correct role
     const id = generateId();
-    const userRole = role === 'developer' ? 'developer' : 'user';
     await c.env.DB.prepare(
       'INSERT INTO users (id, email, name, avatar_url, role, google_id, email_verified) VALUES (?, ?, ?, ?, ?, ?, 1)'
-    ).bind(id, googleUser.email, googleUser.name, googleUser.picture, userRole, googleUser.sub).run();
+    ).bind(id, googleUser.email, googleUser.name, googleUser.picture, portalRole, googleUser.sub).run();
     user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
   } else if (!user.google_id) {
     await c.env.DB.prepare(

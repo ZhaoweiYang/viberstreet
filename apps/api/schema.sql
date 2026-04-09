@@ -1,12 +1,13 @@
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
+  email TEXT NOT NULL,
   name TEXT NOT NULL,
   password_hash TEXT,
   avatar_url TEXT,
   role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user', 'developer', 'admin')),
-  google_id TEXT UNIQUE,
+  google_id TEXT,
+  UNIQUE(email, role),
   email_verified INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
