@@ -12,18 +12,10 @@ const app = new Hono<{ Bindings: Env }>();
 
 // CORS - allow all subdomains
 app.use('*', cors({
-  origin: [
-    'https://viberstreet.com',
-    'https://www.viberstreet.com',
-    'https://dev.viberstreet.com',
-    'https://admin.viberstreet.com',
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:5175',
-  ],
+  origin: '*',
   allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+  credentials: false,
 }));
 
 // Health check
