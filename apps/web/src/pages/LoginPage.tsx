@@ -4,8 +4,6 @@ import { sendCode, verifyCode } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { useI18n } from '../lib/i18n';
 
-type Tab = 'signin' | 'signup';
-
 export default function LoginPage() {
   const { login } = useAuth();
   const { t } = useI18n();
@@ -13,9 +11,7 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
 
-  const [tab, setTab] = useState<Tab>('signin');
   const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [codeSent, setCodeSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,7 +38,7 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      const res: any = await verifyCode(email, code, tab === 'signup' ? name : undefined);
+      const res: any = await verifyCode(email, code);
       const data = res.data || res;
       login(data.token, data.user);
       navigate(redirect, { replace: true });
@@ -66,25 +62,10 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
-          <div className="flex bg-gray-50 rounded-xl p-1 mb-6">
-            <button onClick={() => { setTab('signin'); setCodeSent(false); setError(null); }} className={`flex-1 py-2 text-sm font-medium rounded-lg transition ${tab === 'signin' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
-              {t('login.sign_in')}
-            </button>
-            <button onClick={() => { setTab('signup'); setCodeSent(false); setError(null); }} className={`flex-1 py-2 text-sm font-medium rounded-lg transition ${tab === 'signup' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
-              {t('login.sign_up')}
-            </button>
-          </div>
-
           {error && <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600">{error}</div>}
 
           {!codeSent ? (
             <form onSubmit={handleSendCode} className="space-y-4">
-              {tab === 'signup' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('login.name')}</label>
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} required={tab === 'signup'} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition" />
-                </div>
-              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('login.email')}</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition" />
@@ -102,6 +83,9 @@ export default function LoginPage() {
               </div>
               <button type="submit" disabled={loading || code.length !== 6} className="w-full py-2.5 px-4 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition text-sm disabled:opacity-60">
                 {loading ? '...' : t('login.verify')}
+              </button>
+              <button type="button" onClick={() => { setCodeSent(false); setCode(''); setError(null); }} className="w-full text-sm text-gray-500 hover:text-purple-600 transition">
+                {t('common.back') || 'Back'}
               </button>
             </form>
           )}
