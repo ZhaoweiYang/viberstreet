@@ -47,6 +47,9 @@ export default function Header() {
           </form>
 
           <nav className="flex items-center gap-3">
+            <a href="https://dev.viberstreet.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-600 hover:text-purple-600 font-medium transition hidden md:block">
+              {t('header.developer')}
+            </a>
             <LanguageSwitcher />
             {user ? (
               <>

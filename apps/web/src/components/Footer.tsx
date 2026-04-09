@@ -40,6 +40,7 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('footer.about')}</h3>
             <ul className="space-y-2">
+              <li><a href="https://dev.viberstreet.com" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-purple-600">{t('header.developer')}</a></li>
               <li><span className="text-sm text-gray-500">{t('footer.terms')}</span></li>
               <li><span className="text-sm text-gray-500">{t('footer.privacy')}</span></li>
               <li><span className="text-sm text-gray-500">{t('footer.contact')}</span></li>

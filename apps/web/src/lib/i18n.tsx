@@ -15,6 +15,7 @@ const translations: Record<string, Record<string, string>> = {
   en: {
     'header.search_placeholder': 'Search blueprints...',
     'header.login': 'Login',
+    'header.developer': 'Developer Portal',
     'header.my_purchases': 'My Purchases',
     'header.logout': 'Logout',
     'hero.title': 'Discover AI-Ready Software Blueprints',
@@ -81,6 +82,7 @@ const translations: Record<string, Record<string, string>> = {
   zh: {
     'header.search_placeholder': '搜索开发蓝图...',
     'header.login': '登录',
+    'header.developer': '开发者中心',
     'header.my_purchases': '我的购买',
     'header.logout': '退出登录',
     'hero.title': '发现 AI 就绪的软件开发蓝图',
@@ -147,6 +149,7 @@ const translations: Record<string, Record<string, string>> = {
   ru: {
     'header.search_placeholder': 'Поиск чертежей...',
     'header.login': 'Войти',
+    'header.developer': 'Портал разработчика',
     'header.my_purchases': 'Мои покупки',
     'header.logout': 'Выйти',
     'hero.title': 'Откройте готовые к ИИ чертежи ПО',
@@ -213,6 +216,7 @@ const translations: Record<string, Record<string, string>> = {
   fr: {
     'header.search_placeholder': 'Rechercher des blueprints...',
     'header.login': 'Connexion',
+    'header.developer': 'Portail développeur',
     'header.my_purchases': 'Mes achats',
     'header.logout': 'Déconnexion',
     'hero.title': 'Découvrez les blueprints logiciels prêts pour l\'IA',
@@ -279,6 +283,7 @@ const translations: Record<string, Record<string, string>> = {
   pt: {
     'header.search_placeholder': 'Buscar blueprints...',
     'header.login': 'Entrar',
+    'header.developer': 'Portal do desenvolvedor',
     'header.my_purchases': 'Minhas compras',
     'header.logout': 'Sair',
     'hero.title': 'Descubra blueprints de software prontos para IA',
@@ -345,6 +350,7 @@ const translations: Record<string, Record<string, string>> = {
   es: {
     'header.search_placeholder': 'Buscar blueprints...',
     'header.login': 'Iniciar sesión',
+    'header.developer': 'Portal de desarrollador',
     'header.my_purchases': 'Mis compras',
     'header.logout': 'Cerrar sesión',
     'hero.title': 'Descubre blueprints de software listos para IA',
@@ -411,6 +417,7 @@ const translations: Record<string, Record<string, string>> = {
   ja: {
     'header.search_placeholder': 'ブループリントを検索...',
     'header.login': 'ログイン',
+    'header.developer': '開発者ポータル',
     'header.my_purchases': '購入履歴',
     'header.logout': 'ログアウト',
     'hero.title': 'AI対応ソフトウェアブループリントを発見',
@@ -477,6 +484,7 @@ const translations: Record<string, Record<string, string>> = {
   ko: {
     'header.search_placeholder': '블루프린트 검색...',
     'header.login': '로그인',
+    'header.developer': '개발자 포털',
     'header.my_purchases': '내 구매',
     'header.logout': '로그아웃',
     'hero.title': 'AI 지원 소프트웨어 블루프린트를 발견하세요',
