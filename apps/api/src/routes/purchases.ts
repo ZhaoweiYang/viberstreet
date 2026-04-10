@@ -7,6 +7,27 @@ type Variables = { user: JWTPayload };
 
 export const purchaseRoutes = new Hono<{ Bindings: Env; Variables: Variables }>();
 
+// Stripe webhook - NO auth required (called by Stripe)
+purchaseRoutes.post('/webhook/stripe', async (c) => {
+  const body = await c.req.text();
+  // TODO: verify Stripe signature using c.env.STRIPE_WEBHOOK_SECRET
+
+  const event = JSON.parse(body);
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const { user_id, product_id, version_id } = session.metadata;
+
+    const purchaseId = generateId();
+    await c.env.DB.prepare(
+      'INSERT INTO purchases (id, user_id, product_id, version_id, price, stripe_payment_id) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(purchaseId, user_id, product_id, version_id, session.amount_total, session.payment_intent).run();
+  }
+
+  return c.json({ received: true });
+});
+
+// All other purchase routes require auth
 purchaseRoutes.use('*', requireAuth);
 
 // Create Stripe checkout session
@@ -57,30 +78,14 @@ purchaseRoutes.post('/create-checkout', async (c) => {
     }),
   });
 
+  if (!stripeRes.ok) {
+    const err = await stripeRes.text();
+    return c.json({ success: false, error: `Stripe error: ${err}` }, 500);
+  }
+
   const session = await stripeRes.json() as { id: string; url: string };
 
   return c.json({ success: true, data: { checkout_url: session.url } });
-});
-
-// Stripe webhook
-purchaseRoutes.post('/webhook/stripe', async (c) => {
-  const body = await c.req.text();
-  // In production, verify the Stripe signature here using c.env.STRIPE_WEBHOOK_SECRET
-
-  const event = JSON.parse(body);
-
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const { user_id, product_id, version_id } = session.metadata;
-
-    // Record purchase
-    const purchaseId = generateId();
-    await c.env.DB.prepare(
-      'INSERT INTO purchases (id, user_id, product_id, version_id, price, stripe_payment_id) VALUES (?, ?, ?, ?, ?, ?)'
-    ).bind(purchaseId, user_id, product_id, version_id, session.amount_total, session.payment_intent).run();
-  }
-
-  return c.json({ received: true });
 });
 
 // List user's purchases

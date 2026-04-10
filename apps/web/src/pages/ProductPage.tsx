@@ -66,8 +66,8 @@ export default function ProductPage() {
   const handleCheckout = async () => {
     if (!product) return;
     try {
-      const res = await createCheckout(product.id);
-      window.location.href = res.data?.checkout_url || res.checkout_url;
+      const res: any = await createCheckout(product.id);
+      window.location.href = res.checkout_url || res;
     } catch (err: any) {
       showToast(err.message || 'Checkout failed');
     }
