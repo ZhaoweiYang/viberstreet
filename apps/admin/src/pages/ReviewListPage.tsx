@@ -26,13 +26,13 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function ReviewListPage() {
   const { t } = useI18n();
-  const [activeTab, setActiveTab] = useState('pending');
+  const [activeTab, setActiveTab] = useState('pending_review');
   const [reviews, setReviews] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const tabs = [
-    { key: 'pending', label: t('reviews.tab_pending'), color: 'amber' },
+    { key: 'pending_review', label: t('reviews.tab_pending'), color: 'amber' },
     { key: 'approved', label: t('reviews.tab_approved'), color: 'emerald' },
     { key: 'rejected', label: t('reviews.tab_rejected'), color: 'red' },
     { key: 'revoked', label: t('reviews.tab_revoked'), color: 'rose' },

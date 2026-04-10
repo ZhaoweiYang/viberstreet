@@ -17,7 +17,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getStats(), getReviews('pending')])
+    Promise.all([getStats(), getReviews('pending_review')])
       .then(([s, r]: any[]) => {
         setStats(s);
         const reviews = Array.isArray(r) ? r : r.reviews || [];
