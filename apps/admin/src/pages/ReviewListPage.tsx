@@ -6,10 +6,10 @@ import { getReviews } from '../lib/api';
 function StatusBadge({ status }: { status: string }) {
   const { t } = useI18n();
   const styles: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-700',
-    approved: 'bg-emerald-100 text-emerald-700',
-    rejected: 'bg-red-100 text-red-700',
-    revoked: 'bg-rose-200 text-rose-800',
+    pending: 'bg-amber-500/10 text-amber-400',
+    approved: 'bg-emerald-500/10 text-emerald-400',
+    rejected: 'bg-red-500/10 text-red-400',
+    revoked: 'bg-rose-500/10 text-rose-400',
   };
   const labels: Record<string, string> = {
     pending: t('reviews.tab_pending'),
@@ -18,7 +18,7 @@ function StatusBadge({ status }: { status: string }) {
     revoked: t('reviews.tab_revoked'),
   };
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-600'}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-800 text-slate-400'}`}>
       {labels[status] || status}
     </span>
   );
@@ -55,19 +55,19 @@ export default function ReviewListPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">{t('reviews.title')}</h1>
+        <h1 className="text-2xl font-bold text-white">{t('reviews.title')}</h1>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-slate-100 p-1 rounded-lg w-fit">
+      <div className="flex gap-1 mb-6 bg-slate-800 p-1 rounded-xl w-fit">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               activeTab === tab.key
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white hover:bg-slate-700'
             }`}
           >
             {tab.label}
@@ -76,77 +76,77 @@ export default function ReviewListPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center h-48">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500" />
           </div>
         ) : reviews.length === 0 ? (
           <div className="p-12 text-center">
-            <svg className="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 mx-auto text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
             <p className="text-slate-500 text-sm">{t('reviews.no_reviews')}</p>
           </div>
         ) : (
           <>
-            <div className="px-6 py-3 border-b border-slate-100 text-xs text-slate-500">
+            <div className="px-6 py-3 border-b border-slate-800 text-xs text-slate-500">
               {total} result{total !== 1 ? 's' : ''}
             </div>
             <table className="w-full">
               <thead>
-                <tr className="bg-slate-50">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                <tr className="bg-slate-800/50">
+                  <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                     {t('reviews.product')}
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                     {t('reviews.version')}
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                     {t('reviews.developer')}
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                     {t('reviews.platform')}
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                     {t('reviews.product_type')}
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                     {t('reviews.submitted')}
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                     {t('reviews.status')}
                   </th>
-                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-right text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                     {t('reviews.actions')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-800">
                 {reviews.map((review: any) => (
-                  <tr key={review.id || review.version_id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={review.id || review.version_id} className="hover:bg-slate-800/30 transition-colors">
                     <td className="px-6 py-4">
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-white">
                         {review.product_name || review.name}
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-600 font-mono">
+                      <span className="text-sm text-slate-400 font-mono">
                         v{review.version}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-600">
+                      <span className="text-sm text-slate-400">
                         {review.developer_name || review.developer}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-600">
+                      <span className="text-sm text-slate-400">
                         {review.platform ? t(`platform.${review.platform}`) : '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-600">
+                      <span className="text-sm text-slate-400">
                         {review.product_type ? t(`product_type.${review.product_type}`) : '-'}
                       </span>
                     </td>
@@ -163,7 +163,7 @@ export default function ReviewListPage() {
                     <td className="px-6 py-4 text-right">
                       <Link
                         to={`/reviews/${review.version_id || review.id}`}
-                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-md transition-colors"
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg transition-colors"
                       >
                         {t('reviews.review')}
                       </Link>

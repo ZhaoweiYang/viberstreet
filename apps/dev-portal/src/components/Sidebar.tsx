@@ -20,12 +20,12 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-indigo-950 text-white flex flex-col min-h-screen">
-      <div className="p-6 border-b border-indigo-800">
+    <aside className="w-64 bg-slate-950 border-r border-slate-800 text-white flex flex-col min-h-screen">
+      <div className="p-6 border-b border-slate-800">
         <h1 className="text-xl font-black tracking-tight">
-          <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">Street</span>
+          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">Street</span>
         </h1>
-        <p className="text-xs text-indigo-300 mt-1">Developer Portal</p>
+        <p className="text-xs text-slate-500 mt-1">Developer Portal</p>
       </div>
 
       <nav className="flex-1 py-4">
@@ -35,10 +35,10 @@ export default function Sidebar() {
             to={item.to}
             end={item.to === '/' || item.to === '/products'}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-6 py-3 text-sm transition-colors ${
+              `flex items-center gap-3 px-6 py-3 text-sm transition-all ${
                 isActive
-                  ? 'bg-indigo-900 text-indigo-300 border-r-2 border-indigo-400'
-                  : 'text-indigo-200 hover:bg-indigo-900/50 hover:text-white'
+                  ? 'bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-indigo-400 border-r-2 border-indigo-500'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
               }`
             }
           >
@@ -48,20 +48,20 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-indigo-800">
+      <div className="p-4 border-t border-slate-800">
         <div className="flex items-center gap-3 mb-3 px-2">
-          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-medium">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-sm font-medium shadow-lg shadow-indigo-500/20">
             {user?.name?.charAt(0)?.toUpperCase() || 'D'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{user?.name || 'Developer'}</p>
-            <p className="text-xs text-indigo-300 truncate">{user?.email}</p>
+            <p className="text-sm font-medium truncate text-white">{user?.name || 'Developer'}</p>
+            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
           </div>
         </div>
         <div className="mb-2"><LanguageSwitcher /></div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-indigo-200 hover:text-white hover:bg-indigo-900 rounded transition-colors"
+          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors"
         >
           <LogoutIcon />
           Logout

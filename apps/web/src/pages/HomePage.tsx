@@ -42,44 +42,50 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t('hero.title')}</h1>
-          <p className="text-lg sm:text-xl text-purple-100 max-w-2xl mx-auto mb-8">{t('hero.subtitle')}</p>
+      {/* Hero with gradient mesh */}
+      <section className="relative overflow-hidden bg-slate-950">
+        {/* Gradient mesh blobs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl" />
+          <div className="absolute top-10 right-1/4 w-80 h-80 bg-fuchsia-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-purple-500/15 rounded-full blur-3xl" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 py-20 sm:py-28 text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">{t('hero.title')}</h1>
+          <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-8">{t('hero.subtitle')}</p>
         </div>
       </section>
 
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Platform Filter - Level 1 */}
         <section className="mb-10">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">{t('categories.platforms')}</h2>
+          <h2 className="text-xl font-bold text-white mb-4">{t('categories.platforms')}</h2>
           <div className="flex flex-wrap gap-3">
             {PLATFORMS.map((p) => (
               <Link
                 key={p.key}
                 to={`/browse/${p.key}`}
-                className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-xl hover:border-purple-300 hover:shadow-md transition group"
+                className="flex items-center gap-2 px-5 py-3 bg-slate-800 border border-slate-700 rounded-xl hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300 group"
               >
                 <span className="text-2xl">{p.icon}</span>
-                <span className="font-medium text-gray-700 group-hover:text-purple-700">{t(`platform.${p.key}`)}</span>
+                <span className="font-medium text-slate-300 group-hover:text-violet-400 transition">{t(`platform.${p.key}`)}</span>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* Product Type Filter - Level 2 */}
+        {/* Product Type Filter - Bento Grid */}
         <section className="mb-10">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">{t('categories.product_types')}</h2>
+          <h2 className="text-xl font-bold text-white mb-4">{t('categories.product_types')}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
             {PRODUCT_TYPES.map((pt) => (
               <Link
                 key={pt.key}
                 to={`/browse/all/${pt.key}`}
-                className="flex flex-col items-center gap-2 p-4 bg-white border border-gray-200 rounded-xl hover:border-purple-300 hover:shadow-md transition group text-center"
+                className="flex flex-col items-center gap-2 p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/10 transition-all duration-300 group text-center"
               >
                 <span className="text-3xl">{pt.icon}</span>
-                <span className="text-sm font-medium text-gray-600 group-hover:text-purple-700">{t(`product_type.${pt.key}`)}</span>
+                <span className="text-sm font-medium text-slate-400 group-hover:text-violet-400 transition">{t(`product_type.${pt.key}`)}</span>
               </Link>
             ))}
           </div>
@@ -87,13 +93,13 @@ export default function HomePage() {
 
         {/* Product Grid */}
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-6">
+          <h2 className="text-xl font-bold text-white mb-6">
             {searchQuery ? `"${searchQuery}"` : t('products.popular')}
           </h2>
           {loading ? (
-            <div className="text-center py-16 text-gray-500">Loading...</div>
+            <div className="text-center py-16 text-slate-500">Loading...</div>
           ) : products.length === 0 ? (
-            <div className="text-center py-16 text-gray-500">{t('products.no_results')}</div>
+            <div className="text-center py-16 text-slate-500">{t('products.no_results')}</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((p: any) => (

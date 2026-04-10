@@ -20,7 +20,7 @@ export default function LanguageSwitcher() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-slate-800 text-sm transition text-slate-300"
+        className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-slate-800 text-sm transition text-slate-400"
       >
         <span>{current.flag}</span>
         <span className="hidden sm:inline">{current.name}</span>
@@ -29,13 +29,13 @@ export default function LanguageSwitcher() {
         </svg>
       </button>
       {open && (
-        <div className="absolute left-0 bottom-full mb-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+        <div className="absolute left-0 bottom-full mb-1 w-44 bg-slate-800 rounded-xl shadow-lg border border-slate-700 py-1 z-50">
           {locales.map((l) => (
             <button
               key={l.code}
               onClick={() => { setLocale(l.code); setOpen(false); }}
-              className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-rose-50 transition ${
-                l.code === locale ? 'bg-rose-50 text-rose-700 font-medium' : 'text-gray-700'
+              className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-slate-700 transition ${
+                l.code === locale ? 'bg-rose-500/10 text-rose-400 font-medium' : 'text-slate-300'
               }`}
             >
               <span>{l.flag}</span>

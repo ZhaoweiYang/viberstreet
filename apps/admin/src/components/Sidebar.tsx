@@ -30,12 +30,12 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-slate-900 text-white flex flex-col min-h-screen">
-      <div className="p-6 border-b border-slate-700">
+    <aside className="w-64 bg-slate-950 border-r border-slate-800 text-white flex flex-col min-h-screen">
+      <div className="p-6 border-b border-slate-800">
         <h1 className="text-xl font-black tracking-tight">
           <span className="bg-gradient-to-r from-rose-400 via-pink-400 to-fuchsia-400 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-400 to-purple-400 bg-clip-text text-transparent">Street</span>
         </h1>
-        <p className="text-xs text-slate-400 mt-1">Admin Panel</p>
+        <p className="text-xs text-slate-500 mt-1">Admin Panel</p>
       </div>
 
       <nav className="flex-1 py-4">
@@ -47,8 +47,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-6 py-3 text-sm transition-colors ${
                 isActive
-                  ? 'bg-slate-800 text-rose-400 border-r-2 border-rose-500'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  ? 'bg-rose-500/10 text-rose-400 border-r-2 border-rose-500'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
               }`
             }
           >
@@ -63,20 +63,20 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-slate-700">
+      <div className="p-4 border-t border-slate-800">
         <div className="flex items-center gap-3 mb-3 px-2">
-          <div className="w-8 h-8 rounded-full bg-rose-600 flex items-center justify-center text-sm font-medium">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 flex items-center justify-center text-sm font-medium">
             {user?.name?.charAt(0)?.toUpperCase() || 'A'}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{user?.name || 'Admin'}</p>
-            <p className="text-xs text-slate-400 truncate">{user?.email}</p>
+            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
           </div>
         </div>
         <div className="mb-2"><LanguageSwitcher /></div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded transition-colors"
+          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors"
         >
           <LogoutIcon />
           {t('sidebar.logout')}

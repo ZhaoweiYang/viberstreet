@@ -55,12 +55,12 @@ export default function CategoryPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Breadcrumb + Platform header */}
       <div className="mb-6">
-        <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-          <Link to="/" className="hover:text-purple-600">{t('categories.all')}</Link>
+        <div className="flex items-center gap-2 text-sm text-slate-500 mb-3">
+          <Link to="/" className="hover:text-violet-400 transition">{t('categories.all')}</Link>
           {platform && platform !== 'all' && (
             <>
               <span>/</span>
-              <Link to={`/browse/${platform}`} className="hover:text-purple-600">
+              <Link to={`/browse/${platform}`} className="hover:text-violet-400 transition">
                 {PLATFORM_ICONS[platform]} {t(`platform.${platform}`)}
               </Link>
             </>
@@ -68,12 +68,12 @@ export default function CategoryPage() {
           {productType && (
             <>
               <span>/</span>
-              <span className="text-gray-900">{TYPE_ICONS[productType]} {t(`product_type.${productType}`)}</span>
+              <span className="text-white">{TYPE_ICONS[productType]} {t(`product_type.${productType}`)}</span>
             </>
           )}
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
           {productType ? (
             <>{TYPE_ICONS[productType]} {t(`product_type.${productType}`)}</>
           ) : platform && platform !== 'all' ? (
@@ -88,8 +88,8 @@ export default function CategoryPage() {
       <div className="flex flex-wrap gap-2 mb-4">
         <Link
           to="/browse"
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-            !platform || platform === 'all' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          className={`px-3 py-1.5 rounded-xl text-sm font-medium transition ${
+            !platform || platform === 'all' ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
           }`}
         >
           {t('categories.all')}
@@ -98,8 +98,8 @@ export default function CategoryPage() {
           <Link
             key={p}
             to={productType ? `/browse/${p}/${productType}` : `/browse/${p}`}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-              platform === p ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            className={`px-3 py-1.5 rounded-xl text-sm font-medium transition ${
+              platform === p ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
             }`}
           >
             {PLATFORM_ICONS[p]} {t(`platform.${p}`)}
@@ -111,8 +111,8 @@ export default function CategoryPage() {
       <div className="flex flex-wrap gap-2 mb-8">
         <Link
           to={platform && platform !== 'all' ? `/browse/${platform}` : '/browse'}
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-            !productType ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          className={`px-3 py-1.5 rounded-xl text-sm font-medium transition ${
+            !productType ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
           }`}
         >
           {t('categories.all')}
@@ -121,8 +121,8 @@ export default function CategoryPage() {
           <Link
             key={pt}
             to={`/browse/${platform || 'all'}/${pt}`}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-              productType === pt ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            className={`px-3 py-1.5 rounded-xl text-sm font-medium transition ${
+              productType === pt ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
             }`}
           >
             {TYPE_ICONS[pt]} {t(`product_type.${pt}`)}
@@ -132,9 +132,9 @@ export default function CategoryPage() {
 
       {/* Products */}
       {loading ? (
-        <div className="text-center py-16 text-gray-500">Loading...</div>
+        <div className="text-center py-16 text-slate-500">Loading...</div>
       ) : products.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">{t('products.no_results')}</div>
+        <div className="text-center py-16 text-slate-500">{t('products.no_results')}</div>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -148,8 +148,8 @@ export default function CategoryPage() {
                 <button
                   key={p}
                   onClick={() => loadPage(p)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                    p === page ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  className={`px-3 py-1.5 rounded-xl text-sm font-medium transition ${
+                    p === page ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                   }`}
                 >
                   {p}

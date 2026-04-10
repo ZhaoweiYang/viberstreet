@@ -54,8 +54,14 @@ export default function LoginPage() {
   const displayError = authError || error;
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Gradient mesh background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-rose-500/10 via-transparent to-transparent rounded-full blur-3xl" />
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-pink-500/10 via-transparent to-transparent rounded-full blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white">
             <span className="bg-gradient-to-r from-rose-400 via-pink-400 to-fuchsia-400 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-400 to-purple-400 bg-clip-text text-transparent">Street</span>
@@ -63,11 +69,11 @@ export default function LoginPage() {
           <p className="text-slate-400 mt-2">{t('login.subtitle')}</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-xl p-8">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">{t('login.title')}</h2>
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8">
+          <h2 className="text-xl font-semibold text-white mb-6">{t('login.title')}</h2>
 
           {displayError && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl">
               {displayError}
             </div>
           )}
@@ -75,7 +81,7 @@ export default function LoginPage() {
           {step === 'email' ? (
             <form onSubmit={handleSendCode} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-1">
                   {t('login.email')}
                 </label>
                 <input
@@ -85,24 +91,24 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@viberstreet.com"
                   required
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-rose-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-rose-700 transition-colors disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-rose-600 to-pink-600 text-white py-2.5 rounded-xl text-sm font-medium hover:from-rose-500 hover:to-pink-500 transition-all disabled:opacity-50"
               >
                 {loading ? t('review_detail.submitting') : t('login.send_code')}
               </button>
             </form>
           ) : (
             <form onSubmit={handleVerifyCode} className="space-y-4">
-              <p className="text-sm text-slate-600">
-                We sent a code to <strong>{email}</strong>
+              <p className="text-sm text-slate-400">
+                We sent a code to <strong className="text-slate-200">{email}</strong>
               </p>
               <div>
-                <label htmlFor="code" className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="code" className="block text-sm font-medium text-slate-300 mb-1">
                   {t('login.verification_code')}
                 </label>
                 <input
@@ -113,13 +119,13 @@ export default function LoginPage() {
                   placeholder="000000"
                   required
                   maxLength={6}
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm text-center tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white text-center tracking-widest font-mono placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-rose-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-rose-700 transition-colors disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-rose-600 to-pink-600 text-white py-2.5 rounded-xl text-sm font-medium hover:from-rose-500 hover:to-pink-500 transition-all disabled:opacity-50"
               >
                 {loading ? t('review_detail.submitting') : t('login.verify')}
               </button>
@@ -130,14 +136,14 @@ export default function LoginPage() {
                   setCode('');
                   setError('');
                 }}
-                className="w-full text-sm text-slate-500 hover:text-slate-700"
+                className="w-full text-sm text-slate-500 hover:text-slate-300"
               >
                 {t('common.back')}
               </button>
             </form>
           )}
 
-          <p className="mt-6 text-center text-xs text-slate-400">
+          <p className="mt-6 text-center text-xs text-slate-500">
             {t('login.admin_only')}
           </p>
         </div>
