@@ -55,8 +55,8 @@ export default function ProductDetailPage() {
     if (!id) return;
     setActionLoading(true);
     try {
-      const res = await publishProduct(id);
-      setProduct(res.product);
+      await publishProduct(id);
+      fetchData();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -68,8 +68,8 @@ export default function ProductDetailPage() {
     if (!id) return;
     setActionLoading(true);
     try {
-      const res = await unpublishProduct(id);
-      setProduct(res.product);
+      await unpublishProduct(id);
+      fetchData();
     } catch (err: any) {
       setError(err.message);
     } finally {
