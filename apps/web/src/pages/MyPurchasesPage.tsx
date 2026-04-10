@@ -14,7 +14,7 @@ export default function MyPurchasesPage() {
   useEffect(() => {
     if (!user) { navigate('/login?redirect=/my-purchases'); return; }
     getMyPurchases()
-      .then((res: any) => setPurchases(res.data || []))
+      .then((res: any) => setPurchases(Array.isArray(res) ? res : res.data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [user]);
