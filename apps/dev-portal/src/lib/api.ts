@@ -69,6 +69,9 @@ export interface Product {
   version: string;
   changelog: string | null;
   status: string;
+  platform?: string;
+  platforms?: string[];
+  product_type?: string;
   created_at: string;
   updated_at: string;
 }
