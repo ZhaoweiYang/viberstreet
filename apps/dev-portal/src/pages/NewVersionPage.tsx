@@ -1,25 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { submitVersion, uploadImage } from '../lib/api';
+import { submitVersion, uploadImage, getProduct } from '../lib/api';
 import { useI18n } from '../lib/i18n';
+
+const PLATFORMS = ['web', 'ios', 'android', 'macos', 'windows'];
 
 export default function NewVersionPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
+  const [loadingProduct, setLoadingProduct] = useState(true);
   const [error, setError] = useState('');
   const [screenshots, setScreenshots] = useState<string[]>([]);
   const [uploadingScreenshots, setUploadingScreenshots] = useState(false);
 
+  const [productPlatforms, setProductPlatforms] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState('');
+  const [platformDocs, setPlatformDocs] = useState<Record<string, { doc_content: string; description: string }>>({});
+
   const [form, setForm] = useState({
     version: '',
     changelog: '',
-    doc_content: '',
   });
+
+  useEffect(() => {
+    if (!id) return;
+    setLoadingProduct(true);
+    getProduct(id)
+      .then((r: any) => {
+        const res = r.data || r;
+        const p = res.product || res;
+        // Get platforms from the product - support both plural and singular
+        let platforms: string[] = [];
+        if (p.platforms && Array.isArray(p.platforms)) {
+          platforms = p.platforms;
+        } else if (typeof p.platforms === 'string') {
+          try {
+            platforms = JSON.parse(p.platforms);
+          } catch {
+            platforms = [p.platforms];
+          }
+        } else if (p.platform) {
+          platforms = [p.platform];
+        }
+        // Filter to known platforms only
+        platforms = platforms.filter((pl: string) => PLATFORMS.includes(pl));
+        if (platforms.length === 0) {
+          platforms = ['web']; // fallback
+        }
+        setProductPlatforms(platforms);
+        setActiveTab(platforms[0]);
+        // Initialize platformDocs for each platform
+        const docs: Record<string, { doc_content: string; description: string }> = {};
+        for (const pl of platforms) {
+          docs[pl] = { doc_content: '', description: '' };
+        }
+        setPlatformDocs(docs);
+      })
+      .catch(() => setError(t('common.error')))
+      .finally(() => setLoadingProduct(false));
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handlePlatformDocChange = (platform: string, field: 'doc_content' | 'description', value: string) => {
+    setPlatformDocs((prev) => ({
+      ...prev,
+      [platform]: {
+        ...prev[platform],
+        [field]: value,
+      },
+    }));
   };
 
   const handleScreenshotUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,13 +102,21 @@ export default function NewVersionPage() {
     e.preventDefault();
     if (!id) return;
     setError('');
+
+    // Validation: each platform must have doc_content
+    for (const platform of productPlatforms) {
+      if (!platformDocs[platform]?.doc_content?.trim()) {
+        setError(`Documentation content is required for ${t(`platform.${platform}`)}.`);
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       await submitVersion(id, {
         version: form.version,
         changelog: form.changelog,
-        doc_content: form.doc_content,
-        screenshots,
+        platform_docs: platformDocs,
       });
       navigate(`/products/${id}`);
     } catch (err: any) {
@@ -63,6 +125,14 @@ export default function NewVersionPage() {
       setLoading(false);
     }
   };
+
+  if (loadingProduct) {
+    return (
+      <div className="max-w-3xl">
+        <div className="text-slate-400 text-center py-12">{t('common.loading')}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl">
@@ -113,21 +183,70 @@ export default function NewVersionPage() {
                 className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
               />
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">{t('version.documentation')}</label>
-              <p className="text-xs text-slate-500 mb-2">Supports markdown formatting</p>
-              <textarea
-                name="doc_content"
-                value={form.doc_content}
-                onChange={handleChange}
-                rows={12}
-                placeholder={"# Getting Started\n\nUpdated documentation for this version..."}
-                className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y font-mono text-sm"
-              />
-            </div>
           </div>
         </div>
+
+        {/* Per-Platform Documentation Tabs */}
+        {productPlatforms.length > 0 && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">{t('version.documentation')}</h2>
+
+            {/* Tab Bar */}
+            <div className="flex border-b border-slate-700 mb-4">
+              {productPlatforms.map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setActiveTab(p)}
+                  className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
+                    activeTab === p
+                      ? 'border-indigo-500 text-indigo-400'
+                      : 'border-transparent text-slate-500 hover:text-slate-300 hover:border-slate-600'
+                  }`}
+                >
+                  {t(`platform.${p}`)}
+                  {platformDocs[p]?.doc_content?.trim() ? (
+                    <span className="ml-2 w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block" />
+                  ) : (
+                    <span className="ml-2 w-1.5 h-1.5 bg-slate-600 rounded-full inline-block" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Active Tab Content */}
+            {activeTab && platformDocs[activeTab] && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                    {t('create.description')} ({t(`platform.${activeTab}`)})
+                  </label>
+                  <textarea
+                    value={platformDocs[activeTab].description}
+                    onChange={(e) => handlePlatformDocChange(activeTab, 'description', e.target.value)}
+                    rows={3}
+                    placeholder={`Platform-specific description for ${t(`platform.${activeTab}`)}...`}
+                    className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                    {t('version.documentation')} ({t(`platform.${activeTab}`)})
+                  </label>
+                  <p className="text-xs text-slate-500 mb-2">Supports markdown formatting</p>
+                  <textarea
+                    value={platformDocs[activeTab].doc_content}
+                    onChange={(e) => handlePlatformDocChange(activeTab, 'doc_content', e.target.value)}
+                    rows={12}
+                    placeholder={"# Getting Started\n\nUpdated documentation for this version..."}
+                    className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y font-mono text-sm"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Screenshots */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
