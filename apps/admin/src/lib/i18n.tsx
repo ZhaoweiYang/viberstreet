@@ -118,7 +118,7 @@ const translations: Record<string, Record<string, string>> = {
     'product_type.office': 'Office',
     'product_type.erp': 'ERP',
     'product_type.web3-wallet': 'Web3 Wallet',
-    'product_type.email-client': 'Email Client', 'product_type.dao-message': 'DAO Message',
+    'product_type.email-client': 'Email Client', 'product_type.dao-message': 'DAOmessage',
 
     // Common
     'common.loading': 'Loading',
@@ -227,7 +227,7 @@ const translations: Record<string, Record<string, string>> = {
     'product_type.office': '办公软件',
     'product_type.erp': 'ERP',
     'product_type.web3-wallet': 'Web3 钱包',
-    'product_type.email-client': '邮件客户端', 'product_type.dao-message': 'DAO 消息',
+    'product_type.email-client': '邮件客户端', 'product_type.dao-message': 'DAOmessage',
 
     'common.loading': '加载中',
     'common.error': '错误',

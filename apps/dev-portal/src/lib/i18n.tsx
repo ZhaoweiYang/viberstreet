@@ -21,7 +21,7 @@ const t_en: Record<string, string> = {
   'version.title': 'Submit New Version', 'version.number': 'Version Number', 'version.changelog': 'Changelog', 'version.documentation': 'Documentation Content', 'version.screenshots': 'Screenshots', 'version.submit': 'Submit for Review', 'version.submitting': 'Submitting...',
   'login.title': 'Developer Portal', 'login.subtitle': 'Sell your AI Vibe Coding blueprints', 'login.email': 'Email', 'login.name': 'Name', 'login.send_code': 'Send Code', 'login.code_sent': 'Code sent!', 'login.verification_code': 'Verification Code', 'login.verify': 'Verify & Login', 'login.google': 'Continue with Google',
   'platform.web': 'Web', 'platform.ios': 'iOS', 'platform.android': 'Android', 'platform.macos': 'macOS', 'platform.windows': 'Windows',
-  'product_type.browser': 'Browser', 'product_type.vpn': 'VPN', 'product_type.input-method': 'Input Method', 'product_type.finance': 'Finance', 'product_type.office': 'Office', 'product_type.erp': 'ERP', 'product_type.web3-wallet': 'Web3 Wallet', 'product_type.email-client': 'Email Client', 'product_type.dao-message': 'DAO Message',
+  'product_type.browser': 'Browser', 'product_type.vpn': 'VPN', 'product_type.input-method': 'Input Method', 'product_type.finance': 'Finance', 'product_type.office': 'Office', 'product_type.erp': 'ERP', 'product_type.web3-wallet': 'Web3 Wallet', 'product_type.email-client': 'Email Client', 'product_type.dao-message': 'DAOmessage',
   'common.loading': 'Loading...', 'common.error': 'Something went wrong', 'common.save': 'Save', 'common.back': 'Back', 'common.free': 'Free',
 };
 
@@ -35,7 +35,7 @@ const t_zh: Record<string, string> = {
   'version.title': '提交新版本', 'version.number': '版本号', 'version.changelog': '更新日志', 'version.documentation': '文档内容', 'version.screenshots': '截图', 'version.submit': '提交审核', 'version.submitting': '提交中...',
   'login.title': '开发者门户', 'login.subtitle': '销售你的 AI Vibe Coding 蓝图', 'login.email': '邮箱', 'login.name': '名称', 'login.send_code': '发送验证码', 'login.code_sent': '验证码已发送！', 'login.verification_code': '验证码', 'login.verify': '验证并登录', 'login.google': '使用 Google 登录',
   'platform.web': 'Web 网页', 'platform.ios': 'iOS', 'platform.android': 'Android', 'platform.macos': 'macOS', 'platform.windows': 'Windows',
-  'product_type.browser': '浏览器', 'product_type.vpn': 'VPN', 'product_type.input-method': '输入法', 'product_type.finance': '财务软件', 'product_type.office': '办公软件', 'product_type.erp': 'ERP', 'product_type.web3-wallet': 'Web3 钱包', 'product_type.email-client': '邮件客户端', 'product_type.dao-message': 'DAO 消息',
+  'product_type.browser': '浏览器', 'product_type.vpn': 'VPN', 'product_type.input-method': '输入法', 'product_type.finance': '财务软件', 'product_type.office': '办公软件', 'product_type.erp': 'ERP', 'product_type.web3-wallet': 'Web3 钱包', 'product_type.email-client': '邮件客户端', 'product_type.dao-message': 'DAOmessage',
   'common.loading': '加载中...', 'common.error': '出错了', 'common.save': '保存', 'common.back': '返回', 'common.free': '免费',
 };
 
@@ -49,7 +49,7 @@ const t_ru: Record<string, string> = {
   'version.title': 'Новая версия', 'version.number': 'Номер версии', 'version.changelog': 'Изменения', 'version.documentation': 'Документация', 'version.screenshots': 'Скриншоты', 'version.submit': 'Отправить на проверку', 'version.submitting': 'Отправка...',
   'login.title': 'Портал разработчика', 'login.subtitle': 'Продавайте свои чертежи', 'login.email': 'Эл. почта', 'login.name': 'Имя', 'login.send_code': 'Отправить код', 'login.code_sent': 'Код отправлен!', 'login.verification_code': 'Код подтверждения', 'login.verify': 'Подтвердить', 'login.google': 'Войти через Google',
   'platform.web': 'Web', 'platform.ios': 'iOS', 'platform.android': 'Android', 'platform.macos': 'macOS', 'platform.windows': 'Windows',
-  'product_type.browser': 'Браузер', 'product_type.vpn': 'VPN', 'product_type.input-method': 'Метод ввода', 'product_type.finance': 'Финансы', 'product_type.office': 'Офис', 'product_type.erp': 'ERP', 'product_type.web3-wallet': 'Web3 Кошелёк', 'product_type.email-client': 'Почта', 'product_type.dao-message': 'DAO Сообщения',
+  'product_type.browser': 'Браузер', 'product_type.vpn': 'VPN', 'product_type.input-method': 'Метод ввода', 'product_type.finance': 'Финансы', 'product_type.office': 'Офис', 'product_type.erp': 'ERP', 'product_type.web3-wallet': 'Web3 Кошелёк', 'product_type.email-client': 'Почта', 'product_type.dao-message': 'DAOmessage',
   'common.loading': 'Загрузка...', 'common.error': 'Произошла ошибка', 'common.save': 'Сохранить', 'common.back': 'Назад', 'common.free': 'Бесплатно',
 };
 

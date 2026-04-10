@@ -3,15 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import { getProducts } from '../lib/api';
 import { useI18n } from '../lib/i18n';
 import ProductCard from '../components/ProductCard';
+import { PlatformIcon, ProductTypeIcon } from '../components/Icons';
 
 const PLATFORMS = ['web', 'ios', 'android', 'macos', 'windows'];
-const PLATFORM_ICONS: Record<string, string> = { web: '🌐', ios: '🍎', android: '🤖', macos: '💻', windows: '🪟' };
-
 const PRODUCT_TYPES = ['browser', 'vpn', 'input-method', 'finance', 'office', 'erp', 'web3-wallet', 'email-client', 'dao-message'];
-const TYPE_ICONS: Record<string, string> = {
-  browser: '🌍', vpn: '🔒', 'input-method': '⌨️', finance: '💰',
-  office: '📄', erp: '🏢', 'web3-wallet': '💎', 'email-client': '📧',
-};
 
 export default function CategoryPage() {
   const { platform, productType } = useParams<{ platform?: string; productType?: string }>();
@@ -61,23 +56,23 @@ export default function CategoryPage() {
             <>
               <span>/</span>
               <Link to={`/browse/${platform}`} className="hover:text-violet-400 transition">
-                {PLATFORM_ICONS[platform]} {t(`platform.${platform}`)}
+                <PlatformIcon platform={platform} /> {t(`platform.${platform}`)}
               </Link>
             </>
           )}
           {productType && (
             <>
               <span>/</span>
-              <span className="text-white">{TYPE_ICONS[productType]} {t(`product_type.${productType}`)}</span>
+              <span className="text-white flex items-center gap-1"><ProductTypeIcon type={productType} /> {t(`product_type.${productType}`)}</span>
             </>
           )}
         </div>
 
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
           {productType ? (
-            <>{TYPE_ICONS[productType]} {t(`product_type.${productType}`)}</>
+            <><ProductTypeIcon type={productType} /> {t(`product_type.${productType}`)}</>
           ) : platform && platform !== 'all' ? (
-            <>{PLATFORM_ICONS[platform]} {t(`platform.${platform}`)}</>
+            <><PlatformIcon platform={platform} /> {t(`platform.${platform}`)}</>
           ) : (
             t('products.all')
           )}
@@ -102,7 +97,7 @@ export default function CategoryPage() {
               platform === p ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
             }`}
           >
-            {PLATFORM_ICONS[p]} {t(`platform.${p}`)}
+            <PlatformIcon platform={p} /> {t(`platform.${p}`)}
           </Link>
         ))}
       </div>
@@ -125,7 +120,7 @@ export default function CategoryPage() {
               productType === pt ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
             }`}
           >
-            {TYPE_ICONS[pt]} {t(`product_type.${pt}`)}
+            <ProductTypeIcon type={pt} /> {t(`product_type.${pt}`)}
           </Link>
         ))}
       </div>
