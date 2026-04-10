@@ -38,9 +38,10 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const res = await verifyCode(email, code);
-      login(res.token, res.user);
-      if (res.user.role === 'admin') {
+      const res: any = await verifyCode(email, code);
+      const data = res.data || res;
+      login(data.token, data.user);
+      if (data.user.role === 'admin') {
         navigate('/', { replace: true });
       }
     } catch (err: any) {

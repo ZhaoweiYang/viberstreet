@@ -26,7 +26,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
-      const me = await getMe();
+      const res: any = await getMe();
+      const me = res.data || res;
       if (me.role !== 'admin') {
         setError('Access denied. Admin role required.');
         setToken(null);
