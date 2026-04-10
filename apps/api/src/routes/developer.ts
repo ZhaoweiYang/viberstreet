@@ -50,7 +50,7 @@ devRoutes.post('/products', async (c) => {
   await c.env.DB.prepare(`
     INSERT INTO products (id, developer_id, name, slug, description, category, platform, product_type, price, status)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft')
-  `).bind(productId, user.sub, name, slug, description, `${platform}-${product_type}`, platform, product_type, price).run();
+  `).bind(productId, user.sub, name, slug, description, 'other', platform, product_type, price).run();
 
   // Create first version
   await c.env.DB.prepare(`
