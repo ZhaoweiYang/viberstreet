@@ -22,7 +22,7 @@ export default function ProductDetailPage() {
     description: '',
     platform: 'web',
     product_type: 'browser',
-    price_cents: 0,
+    price: 0,
   });
 
   const fetchData = () => {
@@ -40,7 +40,7 @@ export default function ProductDetailPage() {
           description: p.description,
           platform: p.platform || 'web',
           product_type: p.product_type || 'browser',
-          price_cents: p.price_cents || 0,
+          price: p.price || 0,
         });
       })
       .catch(() => setError(t('common.error')))
@@ -182,8 +182,8 @@ export default function ProductDetailPage() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.price')}</label>
                 <input
                   type="number"
-                  value={editForm.price_cents}
-                  onChange={(e) => setEditForm((f) => ({ ...f, price_cents: parseInt(e.target.value) || 0 }))}
+                  value={editForm.price}
+                  onChange={(e) => setEditForm((f) => ({ ...f, price: parseInt(e.target.value) || 0 }))}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
@@ -222,7 +222,7 @@ export default function ProductDetailPage() {
               <div className="flex items-center gap-6 text-sm text-slate-500">
                 <span>{t('create.platform')}: <strong className="text-slate-700">{t(`platform.${product.platform || 'web'}`)}</strong></span>
                 <span>{t('create.product_type')}: <strong className="text-slate-700">{t(`product_type.${product.product_type || 'browser'}`)}</strong></span>
-                <span>{t('create.price')}: <strong className="text-slate-700">{product.is_free ? t('common.free') : `$${(product.price_cents / 100).toFixed(2)}`}</strong></span>
+                <span>{t('create.price')}: <strong className="text-slate-700">{!product.price ? t('common.free') : `$${(product.price / 100).toFixed(2)}`}</strong></span>
                 <span>{t('create.version')}: <strong className="text-slate-700">v{product.version}</strong></span>
               </div>
             </div>
@@ -271,7 +271,7 @@ export default function ProductDetailPage() {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
           <p className="text-sm text-slate-500">{t('detail.revenue')}</p>
           <p className="text-3xl font-bold text-slate-900 mt-1">
-            ${((product.download_count * product.price_cents) / 100).toFixed(2)}
+            ${((product.download_count * product.price) / 100).toFixed(2)}
           </p>
         </div>
       </div>

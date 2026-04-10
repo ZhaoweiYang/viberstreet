@@ -125,7 +125,7 @@ export default function ProductListPage() {
                     <StatusBadge status={product.status} />
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">
-                    {product.is_free ? t('common.free') : `$${(product.price_cents / 100).toFixed(2)}`}
+                    {!product.price ? t('common.free') : `$${(product.price / 100).toFixed(2)}`}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{product.download_count}</td>
                   <td className="px-6 py-4 text-right">

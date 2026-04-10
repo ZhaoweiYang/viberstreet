@@ -143,7 +143,7 @@ export default function DashboardPage() {
                 <StatusBadge status={product.status} />
                 <div className="text-right">
                   <p className="text-sm font-medium text-slate-900">
-                    {product.is_free ? t('common.free') : `$${(product.price_cents / 100).toFixed(2)}`}
+                    {!product.price ? t('common.free') : `$${(product.price / 100).toFixed(2)}`}
                   </p>
                   <p className="text-xs text-slate-500">{product.download_count} {t('detail.downloads').toLowerCase()}</p>
                 </div>

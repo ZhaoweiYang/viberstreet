@@ -6,12 +6,14 @@ import { getReviewDetail, reviewVersion } from '../lib/api';
 function StatusBadge({ status }: { status: string }) {
   const { t } = useI18n();
   const styles: Record<string, string> = {
+    pending_review: 'bg-amber-100 text-amber-700',
     pending: 'bg-amber-100 text-amber-700',
     approved: 'bg-emerald-100 text-emerald-700',
     rejected: 'bg-red-100 text-red-700',
     revoked: 'bg-rose-200 text-rose-800',
   };
   const labels: Record<string, string> = {
+    pending_review: t('reviews.tab_pending'),
     pending: t('reviews.tab_pending'),
     approved: t('reviews.tab_approved'),
     rejected: t('reviews.tab_rejected'),
@@ -101,8 +103,8 @@ export default function ReviewDetailPage() {
     );
   }
 
-  const reviewStatus = detail.review_status || detail.status || 'pending';
-  const isPending = reviewStatus === 'pending';
+  const reviewStatus = detail.review_status || detail.status || 'pending_review';
+  const isPending = reviewStatus === 'pending_review' || reviewStatus === 'pending';
   const isApproved = reviewStatus === 'approved';
   const screenshots = detail.screenshots || [];
   const reviewHistory = detail.review_history || [];
