@@ -132,13 +132,13 @@ export function getProduct(id: string) {
 export function createProduct(data: {
   name: string;
   description: string;
-  platform: string;
+  platforms: string[];
   product_type: string;
   price: number;
   avatar_url?: string;
   version: string;
   changelog: string;
-  doc_content: string;
+  platform_docs: Record<string, { doc_content: string; description: string }>;
 }) {
   return request<{ product: Product; version: ProductVersion }>('/developer/products', {
     method: 'POST',
@@ -149,7 +149,7 @@ export function createProduct(data: {
 export function updateProduct(id: string, data: Partial<{
   name: string;
   description: string;
-  platform: string;
+  platforms: string[];
   product_type: string;
   price: number;
   avatar_url: string;
@@ -163,7 +163,8 @@ export function updateProduct(id: string, data: Partial<{
 export function submitVersion(productId: string, data: {
   version: string;
   changelog: string;
-  doc_content: string;
+  doc_content?: string;
+  platform_docs?: Record<string, { doc_content: string; description: string }>;
 }) {
   return request<{ version: ProductVersion }>(`/developer/products/${productId}/versions`, {
     method: 'POST',

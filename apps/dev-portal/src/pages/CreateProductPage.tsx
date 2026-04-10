@@ -16,19 +16,64 @@ export default function CreateProductPage() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingScreenshots, setUploadingScreenshots] = useState(false);
 
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState('');
+  const [platformDocs, setPlatformDocs] = useState<Record<string, { doc_content: string; description: string }>>({});
+
   const [form, setForm] = useState({
     name: '',
     description: '',
-    platform: 'web',
     product_type: 'browser',
     price: '',
     version: '1.0.0',
     changelog: 'Initial release',
-    doc_content: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handlePlatformToggle = (platform: string) => {
+    setSelectedPlatforms((prev) => {
+      const isSelected = prev.includes(platform);
+      let next: string[];
+      if (isSelected) {
+        next = prev.filter((p) => p !== platform);
+        // Clean up platformDocs for deselected platform
+        setPlatformDocs((docs) => {
+          const updated = { ...docs };
+          delete updated[platform];
+          return updated;
+        });
+        // If the active tab was deselected, switch to the first remaining
+        if (activeTab === platform) {
+          const remaining = next;
+          setActiveTab(remaining.length > 0 ? remaining[0] : '');
+        }
+      } else {
+        next = [...prev, platform];
+        // Initialize platformDocs for newly selected platform
+        setPlatformDocs((docs) => ({
+          ...docs,
+          [platform]: { doc_content: '', description: '' },
+        }));
+        // If no active tab, set this as active
+        if (!activeTab || !next.includes(activeTab)) {
+          setActiveTab(platform);
+        }
+      }
+      return next;
+    });
+  };
+
+  const handlePlatformDocChange = (platform: string, field: 'doc_content' | 'description', value: string) => {
+    setPlatformDocs((prev) => ({
+      ...prev,
+      [platform]: {
+        ...prev[platform],
+        [field]: value,
+      },
+    }));
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,18 +115,33 @@ export default function CreateProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validation: at least one platform
+    if (selectedPlatforms.length === 0) {
+      setError('Please select at least one platform.');
+      return;
+    }
+
+    // Validation: each selected platform must have doc_content
+    for (const platform of selectedPlatforms) {
+      if (!platformDocs[platform]?.doc_content?.trim()) {
+        setError(`Documentation content is required for ${t(`platform.${platform}`)}.`);
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       const priceCents = form.price ? Math.round(parseFloat(form.price) * 100) : 0;
       const result: any = await createProduct({
         name: form.name,
         description: form.description,
-        platform: form.platform,
+        platforms: selectedPlatforms,
         product_type: form.product_type,
         price: priceCents,
         version: form.version,
         changelog: form.changelog,
-        doc_content: form.doc_content,
+        platform_docs: platformDocs,
       });
       const data = result.data || result;
       navigate(`/products/${data.id || data.product?.id}`);
@@ -136,37 +196,46 @@ export default function CreateProductPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">{t('create.platform')}</label>
-                <select
-                  name="platform"
-                  value={form.platform}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                >
-                  {PLATFORMS.map((p) => (
-                    <option key={p} value={p}>
-                      {t(`platform.${p}`)}
-                    </option>
-                  ))}
-                </select>
+            {/* Platform Checkbox Grid */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">{t('create.platform')}</label>
+              <div className="grid grid-cols-5 gap-3">
+                {PLATFORMS.map((p) => (
+                  <label
+                    key={p}
+                    className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border cursor-pointer transition-all text-sm font-medium ${
+                      selectedPlatforms.includes(p)
+                        ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300'
+                        : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-300'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedPlatforms.includes(p)}
+                      onChange={() => handlePlatformToggle(p)}
+                      className="sr-only"
+                    />
+                    {t(`platform.${p}`)}
+                  </label>
+                ))}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">{t('create.product_type')}</label>
-                <select
-                  name="product_type"
-                  value={form.product_type}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                >
-                  {PRODUCT_TYPES.map((pt) => (
-                    <option key={pt} value={pt}>
-                      {t(`product_type.${pt}`)}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            </div>
+
+            {/* Product Type */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">{t('create.product_type')}</label>
+              <select
+                name="product_type"
+                value={form.product_type}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                {PRODUCT_TYPES.map((pt) => (
+                  <option key={pt} value={pt}>
+                    {t(`product_type.${pt}`)}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -237,21 +306,70 @@ export default function CreateProductPage() {
                 className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
               />
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">{t('create.documentation')}</label>
-              <p className="text-xs text-slate-500 mb-2">Supports markdown formatting</p>
-              <textarea
-                name="doc_content"
-                value={form.doc_content}
-                onChange={handleChange}
-                rows={12}
-                placeholder={t('create.doc_placeholder')}
-                className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y font-mono text-sm"
-              />
-            </div>
           </div>
         </div>
+
+        {/* Per-Platform Documentation Tabs */}
+        {selectedPlatforms.length > 0 && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">{t('create.documentation')}</h2>
+
+            {/* Tab Bar */}
+            <div className="flex border-b border-slate-700 mb-4">
+              {selectedPlatforms.map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setActiveTab(p)}
+                  className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
+                    activeTab === p
+                      ? 'border-indigo-500 text-indigo-400'
+                      : 'border-transparent text-slate-500 hover:text-slate-300 hover:border-slate-600'
+                  }`}
+                >
+                  {t(`platform.${p}`)}
+                  {platformDocs[p]?.doc_content?.trim() ? (
+                    <span className="ml-2 w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block" />
+                  ) : (
+                    <span className="ml-2 w-1.5 h-1.5 bg-slate-600 rounded-full inline-block" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Active Tab Content */}
+            {activeTab && platformDocs[activeTab] && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                    {t('create.description')} ({t(`platform.${activeTab}`)})
+                  </label>
+                  <textarea
+                    value={platformDocs[activeTab].description}
+                    onChange={(e) => handlePlatformDocChange(activeTab, 'description', e.target.value)}
+                    rows={3}
+                    placeholder={`Platform-specific description for ${t(`platform.${activeTab}`)}...`}
+                    className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                    {t('create.documentation')} ({t(`platform.${activeTab}`)})
+                  </label>
+                  <p className="text-xs text-slate-500 mb-2">Supports markdown formatting</p>
+                  <textarea
+                    value={platformDocs[activeTab].doc_content}
+                    onChange={(e) => handlePlatformDocChange(activeTab, 'doc_content', e.target.value)}
+                    rows={12}
+                    placeholder={t('create.doc_placeholder')}
+                    className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y font-mono text-sm"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Screenshots */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">

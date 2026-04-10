@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getProduct, downloadProduct, getPurchaseStatus, createCheckout } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { useI18n } from '../lib/i18n';
+import { PlatformIcon } from '../components/Icons';
 
 const PLATFORM_ICONS: Record<string, string> = { web: '🌐', ios: '🍎', android: '🤖', macos: '💻', windows: '🪟' };
 const TYPE_ICONS: Record<string, string> = {
@@ -22,6 +23,7 @@ export default function ProductPage() {
   const [downloading, setDownloading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
+  const [selectedPlatform, setSelectedPlatform] = useState<string>('');
 
   useEffect(() => {
     if (!slug) return;
@@ -38,19 +40,41 @@ export default function ProductPage() {
       .finally(() => setLoading(false));
   }, [slug, user]);
 
+  // Set default selected platform when product loads
+  useEffect(() => {
+    if (product) {
+      const platforms = product.platforms_list || [product.platform];
+      if (!selectedPlatform || !platforms.includes(selectedPlatform)) {
+        setSelectedPlatform(platforms[0]);
+      }
+    }
+  }, [product]);
+
+  // Reset screenshot index when platform changes
+  useEffect(() => {
+    setActiveScreenshot(0);
+  }, [selectedPlatform]);
+
+  const isMultiPlatform = (product?.platforms_list?.length || 0) > 1;
+
+  const activePlatformDoc = useMemo(() => {
+    if (!product?.platform_docs || !selectedPlatform) return null;
+    return product.platform_docs.find((d: any) => d.platform === selectedPlatform) || null;
+  }, [product, selectedPlatform]);
+
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(null), 4000); };
 
   const handleDownload = async () => {
     if (!slug) return;
     setDownloading(true);
     try {
-      const res = await downloadProduct(slug);
+      const res = await downloadProduct(slug, selectedPlatform);
       const data = res.data || res;
       const blob = new Blob([data.doc_content], { type: 'text/markdown' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${slug}.md`;
+      a.download = isMultiPlatform ? `${slug}-${selectedPlatform}.md` : `${slug}.md`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -85,8 +109,11 @@ export default function ProductPage() {
   const isFree = price === 0;
   const priceLabel = isFree ? t('products.free') : `$${(price / 100).toFixed(2)}`;
   const canDownload = isFree || purchased;
-  const screenshots = product.screenshots?.map((s: any) => s.url || s) || product.screenshot_urls || [];
+  const platformScreenshots = activePlatformDoc?.screenshots?.map((s: any) => s.url || s) || [];
+  const defaultScreenshots = product.screenshots?.map((s: any) => s.url || s) || product.screenshot_urls || [];
+  const screenshots = platformScreenshots.length > 0 ? platformScreenshots : defaultScreenshots;
   const versions = product.versions || [];
+  const displayDescription = activePlatformDoc?.description || product.description;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -135,6 +162,26 @@ export default function ProductPage() {
             </div>
           </div>
 
+          {/* Platform Tabs */}
+          {isMultiPlatform && (
+            <div className="flex gap-2 flex-wrap">
+              {product.platforms_list.map((p: string) => (
+                <button
+                  key={p}
+                  onClick={() => setSelectedPlatform(p)}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition border ${
+                    selectedPlatform === p
+                      ? 'bg-violet-500/20 text-violet-400 border-violet-500/30'
+                      : 'bg-slate-800 text-slate-400 border-transparent hover:text-white hover:bg-slate-700'
+                  }`}
+                >
+                  <PlatformIcon platform={p} size="sm" />
+                  {t(`platform.${p}`)}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Screenshots */}
           {screenshots.length > 0 && (
             <div>
@@ -157,7 +204,7 @@ export default function ProductPage() {
           {/* Description */}
           <div>
             <h2 className="text-lg font-semibold text-white mb-3">{t('product.description')}</h2>
-            <div className="text-slate-400 leading-relaxed whitespace-pre-wrap">{product.description}</div>
+            <div className="text-slate-400 leading-relaxed whitespace-pre-wrap">{displayDescription}</div>
           </div>
 
           {/* Version History */}

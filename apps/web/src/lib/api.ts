@@ -37,8 +37,8 @@ export function getProduct(slug: string) {
   return request<any>(`/products/${slug}`);
 }
 
-export function downloadProduct(slug: string) {
-  return request<any>(`/products/${slug}/download`, { method: 'POST' });
+export function downloadProduct(slug: string, platform?: string) {
+  return request<any>(`/products/${slug}/download`, { method: 'POST', body: JSON.stringify(platform ? { platform } : {}) });
 }
 
 export function getPlatforms() {
