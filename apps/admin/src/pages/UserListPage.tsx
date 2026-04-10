@@ -5,9 +5,9 @@ import { getUsers, updateUserRole } from '../lib/api';
 function RoleBadge({ role }: { role: string }) {
   const { t } = useI18n();
   const styles: Record<string, string> = {
-    admin: 'bg-rose-100 text-rose-700',
-    developer: 'bg-blue-100 text-blue-700',
-    user: 'bg-slate-100 text-slate-600',
+    admin: 'bg-rose-500/10 text-rose-400',
+    developer: 'bg-blue-500/10 text-blue-400',
+    user: 'bg-slate-700/50 text-slate-400',
   };
   const labels: Record<string, string> = {
     admin: t('users.role_admin'),
@@ -15,7 +15,7 @@ function RoleBadge({ role }: { role: string }) {
     user: t('users.role_user'),
   };
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[role] || 'bg-slate-100 text-slate-600'}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[role] || 'bg-slate-800 text-slate-400'}`}>
       {labels[role] || role}
     </span>
   );
@@ -73,50 +73,50 @@ export default function UserListPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">{t('users.title')}</h1>
+        <h1 className="text-2xl font-bold text-white">{t('users.title')}</h1>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center h-48">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500" />
           </div>
         ) : users.length === 0 ? (
           <div className="p-12 text-center">
-            <svg className="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 mx-auto text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
             <p className="text-slate-500 text-sm">{t('users.no_users')}</p>
           </div>
         ) : (
           <>
-            <div className="px-6 py-3 border-b border-slate-100 text-xs text-slate-500">
+            <div className="px-6 py-3 border-b border-slate-800 text-xs text-slate-500">
               {total} user{total !== 1 ? 's' : ''}
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-slate-50">
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                  <tr className="bg-slate-800/50">
+                    <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                       {t('users.name')}
                     </th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                    <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                       {t('users.email')}
                     </th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                    <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                       {t('users.role')}
                     </th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                    <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                       {t('users.joined')}
                     </th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
+                    <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                       {t('users.role')}
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-800">
                   {users.map((user: any) => (
-                    <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                    <tr key={user.id} className="hover:bg-slate-800/30 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {user.avatar_url ? (
@@ -126,16 +126,16 @@ export default function UserListPage() {
                               className="w-8 h-8 rounded-full object-cover"
                             />
                           ) : (
-                            <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 text-sm font-medium">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 flex items-center justify-center text-white text-sm font-medium">
                               {user.name?.charAt(0)?.toUpperCase() || '?'}
                             </div>
                           )}
-                          <p className="text-sm font-medium text-slate-900">
+                          <p className="text-sm font-medium text-white">
                             {user.name || 'Unnamed'}
                           </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
+                      <td className="px-6 py-4 text-sm text-slate-400">
                         {user.email}
                       </td>
                       <td className="px-6 py-4">
@@ -151,7 +151,7 @@ export default function UserListPage() {
                           value={user.role}
                           onChange={(e) => handleRoleChange(user.id, e.target.value)}
                           disabled={updatingId === user.id}
-                          className="px-3 py-1.5 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent disabled:opacity-50"
+                          className="px-3 py-1.5 text-sm border border-slate-700 rounded-xl bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent disabled:opacity-50"
                         >
                           {roles.map((r) => (
                             <option key={r.value} value={r.value}>
@@ -168,7 +168,7 @@ export default function UserListPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+              <div className="px-6 py-4 border-t border-slate-800 flex items-center justify-between">
                 <p className="text-sm text-slate-500">
                   {t('common.page')} {page} {t('common.of')} {totalPages}
                 </p>
@@ -176,14 +176,14 @@ export default function UserListPage() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page <= 1}
-                    className="px-3 py-1.5 text-sm border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-1.5 text-sm border border-slate-700 text-slate-400 rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {t('common.previous')}
                   </button>
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page >= totalPages}
-                    className="px-3 py-1.5 text-sm border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-1.5 text-sm border border-slate-700 text-slate-400 rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {t('common.next')}
                   </button>

@@ -31,7 +31,7 @@ export default function ProductListPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500" />
       </div>
     );
   }
@@ -40,12 +40,12 @@ export default function ProductListPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{t('products.title')}</h1>
-          <p className="text-slate-500 mt-1">Manage your submitted products</p>
+          <h1 className="text-2xl font-bold text-white">{t('products.title')}</h1>
+          <p className="text-slate-400 mt-1">Manage your submitted products</p>
         </div>
         <Link
           to="/products/new"
-          className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:from-indigo-500 hover:to-violet-500 transition-all shadow-lg shadow-indigo-500/25"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -60,10 +60,10 @@ export default function ProductListPage() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               filter === f
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300'
+                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25'
+                : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-indigo-500/50 hover:text-white'
             }`}
           >
             {filterLabels[f] || f}
@@ -72,8 +72,8 @@ export default function ProductListPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
-          <svg className="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center">
+          <svg className="w-12 h-12 text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
           <p className="text-slate-500 mb-4">
@@ -82,33 +82,33 @@ export default function ProductListPage() {
           {filter === 'all' && (
             <Link
               to="/products/new"
-              className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:from-indigo-500 hover:to-violet-500 transition-all shadow-lg shadow-indigo-500/25"
             >
               {t('products.create')}
             </Link>
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.name')}</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.platform')}</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.product_type')}</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.version')}</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('status.draft')}</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.price')}</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('detail.downloads')}</th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider"></th>
+              <tr className="border-b border-slate-800 bg-slate-800/50">
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">{t('create.name')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">{t('create.platform')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">{t('create.product_type')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">{t('create.version')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">{t('status.draft')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">{t('create.price')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">{t('detail.downloads')}</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-800/50">
               {filtered.map((product) => (
-                <tr key={product.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={product.id} className="hover:bg-slate-800/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-sm flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-semibold text-sm flex-shrink-0">
                         {product.avatar_url ? (
                           <img src={product.avatar_url} alt="" className="w-10 h-10 rounded-lg object-cover" />
                         ) : (
@@ -116,25 +116,25 @@ export default function ProductListPage() {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-slate-900 truncate">{product.name}</p>
+                        <p className="text-sm font-medium text-white truncate">{product.name}</p>
                         <p className="text-xs text-slate-500 truncate">{product.slug}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">{t(`platform.${product.platform || 'web'}`)}</td>
-                  <td className="px-6 py-4 text-sm text-slate-600">{t(`product_type.${product.product_type || 'browser'}`)}</td>
-                  <td className="px-6 py-4 text-sm text-slate-600">v{product.version}</td>
+                  <td className="px-6 py-4 text-sm text-slate-400">{t(`platform.${product.platform || 'web'}`)}</td>
+                  <td className="px-6 py-4 text-sm text-slate-400">{t(`product_type.${product.product_type || 'browser'}`)}</td>
+                  <td className="px-6 py-4 text-sm text-slate-400">v{product.version}</td>
                   <td className="px-6 py-4">
                     <StatusBadge status={product.status} />
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">
+                  <td className="px-6 py-4 text-sm text-slate-400">
                     {!product.price ? t('common.free') : `$${(product.price / 100).toFixed(2)}`}
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">{product.download_count}</td>
+                  <td className="px-6 py-4 text-sm text-slate-400">{product.download_count}</td>
                   <td className="px-6 py-4 text-right">
                     <Link
                       to={`/products/${product.id}`}
-                      className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                      className="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors"
                     >
                       {t('detail.edit')}
                     </Link>
@@ -152,16 +152,16 @@ export default function ProductListPage() {
 function StatusBadge({ status }: { status: string }) {
   const { t } = useI18n();
   const styles: Record<string, string> = {
-    draft: 'bg-slate-100 text-slate-700',
-    published: 'bg-green-100 text-green-700',
-    unpublished: 'bg-slate-100 text-slate-600',
-    pending_review: 'bg-yellow-100 text-yellow-700',
-    approved: 'bg-green-100 text-green-700',
-    rejected: 'bg-red-100 text-red-700',
-    revoked: 'bg-red-100 text-red-700',
+    draft: 'bg-slate-500/10 text-slate-400',
+    published: 'bg-emerald-500/10 text-emerald-400',
+    unpublished: 'bg-slate-500/10 text-slate-400',
+    pending_review: 'bg-yellow-500/10 text-yellow-400',
+    approved: 'bg-emerald-500/10 text-emerald-400',
+    rejected: 'bg-red-500/10 text-red-400',
+    revoked: 'bg-red-500/10 text-red-400',
   };
   return (
-    <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-700'}`}>
+    <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-500/10 text-slate-400'}`}>
       {t(`status.${status}`)}
     </span>
   );
