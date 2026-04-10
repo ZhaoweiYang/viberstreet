@@ -24,7 +24,8 @@ async function request<T>(path: string, options: RequestInit = {}, params?: Reco
   const res = await fetch(url, { ...options, headers });
   const json = await res.json().catch(() => ({})) as any;
   if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
-  return json;
+  // Auto-unwrap API response wrapper {success, data: ...}
+  return json.data !== undefined ? json.data : json;
 }
 
 // ========== Products ==========

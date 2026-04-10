@@ -34,9 +34,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.message || `Request failed: ${res.status}`);
+    throw new Error(body.error || body.message || `Request failed: ${res.status}`);
   }
-  return res.json();
+  const json = await res.json() as any;
+  // Auto-unwrap API response wrapper {success, data: ...}
+  return json.data !== undefined ? json.data : json;
 }
 
 // Auth - admin portal: no registration, no Google login
