@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { getStats, getMyProducts, type DevStats, type Product } from '../lib/api';
+import { useI18n } from '../lib/i18n';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const [stats, setStats] = useState<DevStats | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,10 +31,10 @@ export default function DashboardPage() {
   }
 
   const statCards = [
-    { label: 'Total Products', value: stats?.totalProducts ?? 0, icon: PackageIcon, color: 'bg-indigo-500' },
-    { label: 'Published', value: stats?.publishedProducts ?? 0, icon: CheckIcon, color: 'bg-green-500' },
-    { label: 'Total Downloads', value: stats?.totalDownloads ?? 0, icon: DownloadIcon, color: 'bg-purple-500' },
-    { label: 'Revenue', value: `$${((stats?.totalRevenue ?? 0) / 100).toFixed(2)}`, icon: DollarIcon, color: 'bg-amber-500' },
+    { label: t('dashboard.total_products'), value: stats?.totalProducts ?? 0, icon: PackageIcon, color: 'bg-indigo-500' },
+    { label: t('dashboard.published'), value: stats?.publishedProducts ?? 0, icon: CheckIcon, color: 'bg-green-500' },
+    { label: t('dashboard.total_downloads'), value: stats?.totalDownloads ?? 0, icon: DownloadIcon, color: 'bg-purple-500' },
+    { label: t('dashboard.revenue'), value: `$${((stats?.totalRevenue ?? 0) / 100).toFixed(2)}`, icon: DollarIcon, color: 'bg-amber-500' },
   ];
 
   return (
@@ -69,7 +71,7 @@ export default function DashboardPage() {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <h3 className="text-lg font-semibold">Create New Product</h3>
+            <h3 className="text-lg font-semibold">{t('dashboard.create_new')}</h3>
           </div>
           <p className="text-indigo-200 text-sm">Submit a new product for review</p>
         </Link>
@@ -81,7 +83,7 @@ export default function DashboardPage() {
             <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
-            <h3 className="text-lg font-semibold text-slate-900">My Products</h3>
+            <h3 className="text-lg font-semibold text-slate-900">{t('products.title')}</h3>
           </div>
           <p className="text-slate-500 text-sm">Manage and update your products</p>
         </Link>
@@ -104,19 +106,19 @@ export default function DashboardPage() {
       {/* Recent Products */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200">
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Recent Products</h2>
+          <h2 className="text-lg font-semibold text-slate-900">{t('dashboard.recent_products')}</h2>
           <Link to="/products" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-            View all
+            {t('dashboard.view_all')}
           </Link>
         </div>
         {products.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-slate-500 mb-4">You haven't created any products yet.</p>
+            <p className="text-slate-500 mb-4">{t('products.no_products')}</p>
             <Link
               to="/products/new"
               className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
             >
-              Create your first product
+              {t('dashboard.create_new')}
             </Link>
           </div>
         ) : (
@@ -136,14 +138,14 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-900 truncate">{product.name}</p>
-                  <p className="text-xs text-slate-500">v{product.version} &middot; {product.category}</p>
+                  <p className="text-xs text-slate-500">v{product.version} &middot; {t(`platform.${product.platform || 'web'}`)} &middot; {t(`product_type.${product.product_type || 'browser'}`)}</p>
                 </div>
                 <StatusBadge status={product.status} />
                 <div className="text-right">
                   <p className="text-sm font-medium text-slate-900">
-                    {product.is_free ? 'Free' : `$${(product.price_cents / 100).toFixed(2)}`}
+                    {product.is_free ? t('common.free') : `$${(product.price_cents / 100).toFixed(2)}`}
                   </p>
-                  <p className="text-xs text-slate-500">{product.download_count} downloads</p>
+                  <p className="text-xs text-slate-500">{product.download_count} {t('detail.downloads').toLowerCase()}</p>
                 </div>
               </Link>
             ))}
@@ -155,6 +157,7 @@ export default function DashboardPage() {
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useI18n();
   const styles: Record<string, string> = {
     draft: 'bg-slate-100 text-slate-700',
     published: 'bg-green-100 text-green-700',
@@ -165,7 +168,7 @@ function StatusBadge({ status }: { status: string }) {
   };
   return (
     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-700'}`}>
-      {status.replace('_', ' ')}
+      {t(`status.${status}`)}
     </span>
   );
 }

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyProducts, type Product } from '../lib/api';
+import { useI18n } from '../lib/i18n';
 
 export default function ProductListPage() {
+  const { t } = useI18n();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
@@ -16,6 +18,13 @@ export default function ProductListPage() {
 
   const filtered = filter === 'all' ? products : products.filter((p) => p.status === filter);
 
+  const filterLabels: Record<string, string> = {
+    all: t('products.title'),
+    draft: t('status.draft'),
+    published: t('status.published'),
+    unpublished: t('status.unpublished'),
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -28,7 +37,7 @@ export default function ProductListPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">My Products</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{t('products.title')}</h1>
           <p className="text-slate-500 mt-1">Manage your submitted products</p>
         </div>
         <Link
@@ -38,7 +47,7 @@ export default function ProductListPage() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          New Product
+          {t('products.create')}
         </Link>
       </div>
 
@@ -54,7 +63,7 @@ export default function ProductListPage() {
                 : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300'
             }`}
           >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+            {filterLabels[f] || f}
           </button>
         ))}
       </div>
@@ -65,14 +74,14 @@ export default function ProductListPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
           <p className="text-slate-500 mb-4">
-            {filter === 'all' ? 'No products yet. Create your first one!' : `No ${filter} products.`}
+            {filter === 'all' ? t('products.no_products') : `${t(`status.${filter}`)} - ${t('products.no_products')}`}
           </p>
           {filter === 'all' && (
             <Link
               to="/products/new"
               className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700"
             >
-              Create Product
+              {t('products.create')}
             </Link>
           )}
         </div>
@@ -81,12 +90,13 @@ export default function ProductListPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Product</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Category</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Version</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Price</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Downloads</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.name')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.platform')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.product_type')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.version')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('status.draft')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.price')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('detail.downloads')}</th>
                 <th className="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider"></th>
               </tr>
             </thead>
@@ -108,13 +118,14 @@ export default function ProductListPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">{product.category}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{t(`platform.${product.platform || 'web'}`)}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{t(`product_type.${product.product_type || 'browser'}`)}</td>
                   <td className="px-6 py-4 text-sm text-slate-600">v{product.version}</td>
                   <td className="px-6 py-4">
                     <StatusBadge status={product.status} />
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">
-                    {product.is_free ? 'Free' : `$${(product.price_cents / 100).toFixed(2)}`}
+                    {product.is_free ? t('common.free') : `$${(product.price_cents / 100).toFixed(2)}`}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">{product.download_count}</td>
                   <td className="px-6 py-4 text-right">
@@ -122,7 +133,7 @@ export default function ProductListPage() {
                       to={`/products/${product.id}`}
                       className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
                     >
-                      Manage
+                      {t('detail.edit')}
                     </Link>
                   </td>
                 </tr>
@@ -136,6 +147,7 @@ export default function ProductListPage() {
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useI18n();
   const styles: Record<string, string> = {
     draft: 'bg-slate-100 text-slate-700',
     published: 'bg-green-100 text-green-700',
@@ -147,7 +159,7 @@ function StatusBadge({ status }: { status: string }) {
   };
   return (
     <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-700'}`}>
-      {status.replace('_', ' ')}
+      {t(`status.${status}`)}
     </span>
   );
 }

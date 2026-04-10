@@ -1,23 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProduct, uploadImage } from '../lib/api';
+import { useI18n } from '../lib/i18n';
 
-const CATEGORIES = [
-  'productivity',
-  'design',
-  'development',
-  'marketing',
-  'analytics',
-  'communication',
-  'finance',
-  'education',
-  'entertainment',
-  'utilities',
-  'other',
-];
+const PLATFORMS = ['web', 'ios', 'android', 'macos', 'windows'];
+const PRODUCT_TYPES = ['browser', 'vpn', 'input-method', 'finance', 'office', 'erp', 'web3-wallet', 'email-client'];
 
 export default function CreateProductPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
@@ -28,7 +19,8 @@ export default function CreateProductPage() {
   const [form, setForm] = useState({
     name: '',
     description: '',
-    category: 'productivity',
+    platform: 'web',
+    product_type: 'browser',
     price: '',
     version: '1.0.0',
     changelog: 'Initial release',
@@ -84,7 +76,8 @@ export default function CreateProductPage() {
       const result = await createProduct({
         name: form.name,
         description: form.description,
-        category: form.category,
+        platform: form.platform,
+        product_type: form.product_type,
         price_cents: priceCents,
         avatar_url: avatarUrl || undefined,
         version: form.version,
@@ -103,7 +96,7 @@ export default function CreateProductPage() {
   return (
     <div className="max-w-3xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Create New Product</h1>
+        <h1 className="text-2xl font-bold text-slate-900">{t('create.title')}</h1>
         <p className="text-slate-500 mt-1">Submit a new product for review. It will be reviewed by our team before publishing.</p>
       </div>
 
@@ -116,10 +109,10 @@ export default function CreateProductPage() {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Product Info */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Product Information</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('create.title')}</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Product Name</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.name')}</label>
               <input
                 type="text"
                 name="name"
@@ -132,7 +125,7 @@ export default function CreateProductPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.description')}</label>
               <textarea
                 name="description"
                 required
@@ -146,38 +139,55 @@ export default function CreateProductPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.platform')}</label>
                 <select
-                  name="category"
-                  value={form.category}
+                  name="platform"
+                  value={form.platform}
                   onChange={handleChange}
                   className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
                 >
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  {PLATFORMS.map((p) => (
+                    <option key={p} value={p}>
+                      {t(`platform.${p}`)}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Price (USD, 0 = free)</label>
-                <input
-                  type="number"
-                  name="price"
-                  min="0"
-                  step="0.01"
-                  value={form.price}
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.product_type')}</label>
+                <select
+                  name="product_type"
+                  value={form.product_type}
                   onChange={handleChange}
-                  placeholder="0.00"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
+                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                >
+                  {PRODUCT_TYPES.map((pt) => (
+                    <option key={pt} value={pt}>
+                      {t(`product_type.${pt}`)}
+                    </option>
+                  ))}
+                </select>
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.price')}</label>
+              <p className="text-xs text-slate-400 mb-2">{t('create.price_hint')}</p>
+              <input
+                type="number"
+                name="price"
+                min="0"
+                step="0.01"
+                value={form.price}
+                onChange={handleChange}
+                placeholder="0.00"
+                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
             </div>
 
             {/* Avatar Upload */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Product Avatar</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.avatar')}</label>
               <div className="flex items-center gap-4">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Avatar" className="w-16 h-16 rounded-lg object-cover" />
@@ -189,7 +199,7 @@ export default function CreateProductPage() {
                   </div>
                 )}
                 <label className="cursor-pointer bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
-                  {uploadingAvatar ? 'Uploading...' : 'Upload Avatar'}
+                  {uploadingAvatar ? 'Uploading...' : t('create.avatar')}
                   <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" disabled={uploadingAvatar} />
                 </label>
               </div>
@@ -199,11 +209,11 @@ export default function CreateProductPage() {
 
         {/* Version Info */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Initial Version</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('create.version')}</h2>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Version</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.version')}</label>
                 <input
                   type="text"
                   name="version"
@@ -217,7 +227,7 @@ export default function CreateProductPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Changelog</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.changelog')}</label>
               <textarea
                 name="changelog"
                 required
@@ -230,14 +240,14 @@ export default function CreateProductPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Documentation Content</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.documentation')}</label>
               <p className="text-xs text-slate-400 mb-2">Supports markdown formatting</p>
               <textarea
                 name="doc_content"
                 value={form.doc_content}
                 onChange={handleChange}
                 rows={12}
-                placeholder={"# Getting Started\n\nDescribe how to use your product...\n\n## Installation\n\n## Usage\n\n## API Reference"}
+                placeholder={t('create.doc_placeholder')}
                 className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y font-mono text-sm"
               />
             </div>
@@ -246,7 +256,7 @@ export default function CreateProductPage() {
 
         {/* Screenshots */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Screenshots</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('create.screenshots')}</h2>
           <div className="space-y-4">
             {screenshots.length > 0 && (
               <div className="grid grid-cols-3 gap-4">
@@ -268,7 +278,7 @@ export default function CreateProductPage() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              {uploadingScreenshots ? 'Uploading...' : 'Add Screenshots'}
+              {uploadingScreenshots ? 'Uploading...' : t('create.screenshots')}
               <input type="file" accept="image/*" multiple onChange={handleScreenshotUpload} className="hidden" disabled={uploadingScreenshots} />
             </label>
           </div>
@@ -281,14 +291,14 @@ export default function CreateProductPage() {
             disabled={loading || uploadingAvatar || uploadingScreenshots}
             className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
           >
-            {loading ? 'Creating...' : 'Create Product & Submit for Review'}
+            {loading ? t('create.submitting') : t('create.submit')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/products')}
             className="text-slate-600 hover:text-slate-800 px-4 py-3 font-medium"
           >
-            Cancel
+            {t('detail.cancel')}
           </button>
         </div>
       </form>

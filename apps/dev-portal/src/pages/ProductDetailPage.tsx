@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getProduct, updateProduct, publishProduct, unpublishProduct, type Product, type ProductVersion } from '../lib/api';
+import { useI18n } from '../lib/i18n';
+
+const PLATFORMS = ['web', 'ios', 'android', 'macos', 'windows'];
+const PRODUCT_TYPES = ['browser', 'vpn', 'input-method', 'finance', 'office', 'erp', 'web3-wallet', 'email-client'];
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [product, setProduct] = useState<Product | null>(null);
   const [versions, setVersions] = useState<ProductVersion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +20,8 @@ export default function ProductDetailPage() {
   const [editForm, setEditForm] = useState({
     name: '',
     description: '',
-    category: '',
+    platform: 'web',
+    product_type: 'browser',
     price_cents: 0,
   });
 
@@ -34,10 +40,10 @@ export default function ProductDetailPage() {
           description: p.description,
           platform: p.platform || 'web',
           product_type: p.product_type || 'browser',
-          price: p.price || 0,
+          price_cents: p.price_cents || 0,
         });
       })
-      .catch(() => setError('Failed to load product'))
+      .catch(() => setError(t('common.error')))
       .finally(() => setLoading(false));
   };
 
@@ -96,9 +102,9 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-500">Product not found.</p>
+        <p className="text-slate-500">{t('common.error')}</p>
         <Link to="/products" className="text-indigo-600 hover:text-indigo-700 mt-2 inline-block">
-          Back to products
+          {t('common.back')}
         </Link>
       </div>
     );
@@ -115,7 +121,7 @@ export default function ProductDetailPage() {
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Back to products
+        {t('common.back')}
       </Link>
 
       {error && (
@@ -130,7 +136,7 @@ export default function ProductDetailPage() {
         {editing ? (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Product Name</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.name')}</label>
               <input
                 type="text"
                 value={editForm.name}
@@ -139,7 +145,7 @@ export default function ProductDetailPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.description')}</label>
               <textarea
                 value={editForm.description}
                 onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
@@ -147,18 +153,33 @@ export default function ProductDetailPage() {
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-                <input
-                  type="text"
-                  value={editForm.category}
-                  onChange={(e) => setEditForm((f) => ({ ...f, category: e.target.value }))}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.platform')}</label>
+                <select
+                  value={editForm.platform}
+                  onChange={(e) => setEditForm((f) => ({ ...f, platform: e.target.value }))}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                >
+                  {PLATFORMS.map((p) => (
+                    <option key={p} value={p}>{t(`platform.${p}`)}</option>
+                  ))}
+                </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Price (cents)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.product_type')}</label>
+                <select
+                  value={editForm.product_type}
+                  onChange={(e) => setEditForm((f) => ({ ...f, product_type: e.target.value }))}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                >
+                  {PRODUCT_TYPES.map((pt) => (
+                    <option key={pt} value={pt}>{t(`product_type.${pt}`)}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.price')}</label>
                 <input
                   type="number"
                   value={editForm.price_cents}
@@ -173,13 +194,13 @@ export default function ProductDetailPage() {
                 disabled={actionLoading}
                 className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
               >
-                {actionLoading ? 'Saving...' : 'Save Changes'}
+                {actionLoading ? t('common.loading') : t('detail.save')}
               </button>
               <button
                 onClick={() => setEditing(false)}
                 className="text-slate-600 hover:text-slate-800 px-4 py-2 text-sm font-medium"
               >
-                Cancel
+                {t('detail.cancel')}
               </button>
             </div>
           </div>
@@ -199,9 +220,10 @@ export default function ProductDetailPage() {
               </div>
               <p className="text-slate-500 mb-3">{product.description}</p>
               <div className="flex items-center gap-6 text-sm text-slate-500">
-                <span>Category: <strong className="text-slate-700">{product.category}</strong></span>
-                <span>Price: <strong className="text-slate-700">{product.is_free ? 'Free' : `$${(product.price_cents / 100).toFixed(2)}`}</strong></span>
-                <span>Version: <strong className="text-slate-700">v{product.version}</strong></span>
+                <span>{t('create.platform')}: <strong className="text-slate-700">{t(`platform.${product.platform || 'web'}`)}</strong></span>
+                <span>{t('create.product_type')}: <strong className="text-slate-700">{t(`product_type.${product.product_type || 'browser'}`)}</strong></span>
+                <span>{t('create.price')}: <strong className="text-slate-700">{product.is_free ? t('common.free') : `$${(product.price_cents / 100).toFixed(2)}`}</strong></span>
+                <span>{t('create.version')}: <strong className="text-slate-700">v{product.version}</strong></span>
               </div>
             </div>
             <div className="flex gap-2 flex-shrink-0">
@@ -209,7 +231,7 @@ export default function ProductDetailPage() {
                 onClick={() => setEditing(true)}
                 className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
               >
-                Edit
+                {t('detail.edit')}
               </button>
               {canPublish && (
                 <button
@@ -217,7 +239,7 @@ export default function ProductDetailPage() {
                   disabled={actionLoading}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
                 >
-                  {actionLoading ? 'Publishing...' : 'Publish'}
+                  {actionLoading ? t('common.loading') : t('detail.publish')}
                 </button>
               )}
               {canUnpublish && (
@@ -226,14 +248,14 @@ export default function ProductDetailPage() {
                   disabled={actionLoading}
                   className="px-4 py-2 bg-slate-600 text-white rounded-lg text-sm font-medium hover:bg-slate-700 disabled:opacity-50 transition-colors"
                 >
-                  {actionLoading ? 'Unpublishing...' : 'Unpublish'}
+                  {actionLoading ? t('common.loading') : t('detail.unpublish')}
                 </button>
               )}
               <Link
                 to={`/products/${id}/versions/new`}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
               >
-                New Version
+                {t('detail.new_version')}
               </Link>
             </div>
           </div>
@@ -243,11 +265,11 @@ export default function ProductDetailPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-6 mb-6">
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <p className="text-sm text-slate-500">Downloads</p>
+          <p className="text-sm text-slate-500">{t('detail.downloads')}</p>
           <p className="text-3xl font-bold text-slate-900 mt-1">{product.download_count}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <p className="text-sm text-slate-500">Revenue</p>
+          <p className="text-sm text-slate-500">{t('detail.revenue')}</p>
           <p className="text-3xl font-bold text-slate-900 mt-1">
             ${((product.download_count * product.price_cents) / 100).toFixed(2)}
           </p>
@@ -257,18 +279,18 @@ export default function ProductDetailPage() {
       {/* Version History */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200">
         <div className="px-6 py-4 border-b border-slate-200">
-          <h2 className="text-lg font-semibold text-slate-900">Version History</h2>
+          <h2 className="text-lg font-semibold text-slate-900">{t('detail.versions')}</h2>
         </div>
         {versions.length === 0 ? (
-          <div className="p-8 text-center text-slate-500">No versions found.</div>
+          <div className="p-8 text-center text-slate-500">{t('products.no_products')}</div>
         ) : (
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Version</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Changelog</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Review Note</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('create.version')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('status.draft')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('version.changelog')}</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">{t('detail.review_note')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Submitted</th>
               </tr>
             </thead>
@@ -303,7 +325,7 @@ export default function ProductDetailPage() {
       {product.screenshots && product.screenshots.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 mt-6">
           <div className="px-6 py-4 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900">Screenshots</h2>
+            <h2 className="text-lg font-semibold text-slate-900">{t('create.screenshots')}</h2>
           </div>
           <div className="p-6 grid grid-cols-3 gap-4">
             {product.screenshots.map((url, i) => (
@@ -317,6 +339,7 @@ export default function ProductDetailPage() {
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useI18n();
   const styles: Record<string, string> = {
     draft: 'bg-slate-100 text-slate-700',
     published: 'bg-green-100 text-green-700',
@@ -324,12 +347,13 @@ function StatusBadge({ status }: { status: string }) {
   };
   return (
     <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-700'}`}>
-      {status}
+      {t(`status.${status}`)}
     </span>
   );
 }
 
 function VersionStatusBadge({ status }: { status: string }) {
+  const { t } = useI18n();
   const styles: Record<string, string> = {
     draft: 'bg-slate-100 text-slate-700',
     pending_review: 'bg-yellow-100 text-yellow-700',
@@ -339,7 +363,7 @@ function VersionStatusBadge({ status }: { status: string }) {
   };
   return (
     <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-100 text-slate-700'}`}>
-      {status.replace('_', ' ')}
+      {t(`status.${status}`)}
     </span>
   );
 }

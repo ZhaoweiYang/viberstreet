@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { submitVersion, uploadImage } from '../lib/api';
+import { useI18n } from '../lib/i18n';
 
 export default function NewVersionPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [screenshots, setScreenshots] = useState<string[]>([]);
@@ -68,11 +70,11 @@ export default function NewVersionPage() {
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Back to product
+        {t('common.back')}
       </Link>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Submit New Version</h1>
+        <h1 className="text-2xl font-bold text-slate-900">{t('version.title')}</h1>
         <p className="text-slate-500 mt-1">This version will be automatically submitted for review.</p>
       </div>
 
@@ -84,10 +86,10 @@ export default function NewVersionPage() {
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Version Details</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('version.title')}</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Version String</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('version.number')}</label>
               <input
                 type="text"
                 name="version"
@@ -100,7 +102,7 @@ export default function NewVersionPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Changelog</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('version.changelog')}</label>
               <textarea
                 name="changelog"
                 required
@@ -113,7 +115,7 @@ export default function NewVersionPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Documentation Content</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('version.documentation')}</label>
               <p className="text-xs text-slate-400 mb-2">Supports markdown formatting</p>
               <textarea
                 name="doc_content"
@@ -129,7 +131,7 @@ export default function NewVersionPage() {
 
         {/* Screenshots */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Screenshots</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">{t('version.screenshots')}</h2>
           <div className="space-y-4">
             {screenshots.length > 0 && (
               <div className="grid grid-cols-3 gap-4">
@@ -151,7 +153,7 @@ export default function NewVersionPage() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              {uploadingScreenshots ? 'Uploading...' : 'Add Screenshots'}
+              {uploadingScreenshots ? 'Uploading...' : t('version.screenshots')}
               <input type="file" accept="image/*" multiple onChange={handleScreenshotUpload} className="hidden" disabled={uploadingScreenshots} />
             </label>
           </div>
@@ -164,14 +166,14 @@ export default function NewVersionPage() {
             disabled={loading || uploadingScreenshots}
             className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
           >
-            {loading ? 'Submitting...' : 'Submit Version for Review'}
+            {loading ? t('version.submitting') : t('version.submit')}
           </button>
           <button
             type="button"
             onClick={() => navigate(`/products/${id}`)}
             className="text-slate-600 hover:text-slate-800 px-4 py-3 font-medium"
           >
-            Cancel
+            {t('detail.cancel')}
           </button>
         </div>
       </form>
