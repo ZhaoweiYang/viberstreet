@@ -102,9 +102,9 @@ export function getReviewDetail(versionId: string) {
 }
 
 export function reviewVersion(versionId: string, status: 'approved' | 'rejected' | 'revoked', note?: string) {
-  return request<any>(`/admin/reviews/${versionId}/review`, {
+  return request<any>(`/admin/reviews/${versionId}`, {
     method: 'POST',
-    body: JSON.stringify({ status, note }),
+    body: JSON.stringify({ status, review_note: note }),
   });
 }
 

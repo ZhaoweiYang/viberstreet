@@ -18,9 +18,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     Promise.all([getStats(), getReviews('pending')])
-      .then(([s, r]) => {
+      .then(([s, r]: any[]) => {
         setStats(s);
-        setPendingReviews(r.reviews.slice(0, 5));
+        const reviews = Array.isArray(r) ? r : r.reviews || [];
+        setPendingReviews(reviews.slice(0, 5));
       })
       .catch(() => {})
       .finally(() => setLoading(false));

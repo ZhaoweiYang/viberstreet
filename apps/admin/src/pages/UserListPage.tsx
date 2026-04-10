@@ -39,11 +39,11 @@ export default function UserListPage() {
   const fetchUsers = (p: number) => {
     setLoading(true);
     getUsers(p)
-      .then((res) => {
-        setUsers(res.users);
-        setTotal(res.total);
-        setPage(res.page);
-        setTotalPages(res.totalPages);
+      .then((res: any) => {
+        setUsers(Array.isArray(res) ? res : res.users || []);
+        setTotal(res.total || (Array.isArray(res) ? res.length : 0));
+        setPage(res.page || p);
+        setTotalPages(res.totalPages || 1);
       })
       .catch(() => {
         setUsers([]);

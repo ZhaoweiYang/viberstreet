@@ -38,10 +38,10 @@ export default function ProductListPage() {
   useEffect(() => {
     setLoading(true);
     getProducts({ page, status: statusFilter, search })
-      .then((res) => {
-        setProducts(res.products);
-        setTotal(res.total);
-        setTotalPages(res.totalPages);
+      .then((res: any) => {
+        setProducts(Array.isArray(res) ? res : res.products || []);
+        setTotal(res.total || (Array.isArray(res) ? res.length : 0));
+        setTotalPages(res.totalPages || 1);
       })
       .catch(() => {
         setProducts([]);

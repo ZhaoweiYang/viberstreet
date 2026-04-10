@@ -41,9 +41,9 @@ export default function ReviewListPage() {
   useEffect(() => {
     setLoading(true);
     getReviews(activeTab)
-      .then((res) => {
-        setReviews(res.reviews);
-        setTotal(res.total);
+      .then((res: any) => {
+        setReviews(Array.isArray(res) ? res : res.reviews || []);
+        setTotal(res.total || (Array.isArray(res) ? res.length : 0));
       })
       .catch(() => {
         setReviews([]);
