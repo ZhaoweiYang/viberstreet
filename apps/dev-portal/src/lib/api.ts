@@ -116,30 +116,30 @@ export function googleAuth(credential: string) {
 }
 
 export function getMe() {
-  return request<User>('/api/auth/me');
+  return request<User>('/auth/me');
 }
 
 // Developer Products
 export function getMyProducts() {
-  return request<{ products: Product[]; total: number }>('/api/developer/products');
+  return request<{ products: Product[]; total: number }>('/developer/products');
 }
 
 export function getProduct(id: string) {
-  return request<{ product: Product; versions: ProductVersion[] }>(`/api/developer/products/${id}`);
+  return request<{ product: Product; versions: ProductVersion[] }>(`/developer/products/${id}`);
 }
 
 export function createProduct(data: {
   name: string;
   description: string;
-  category: string;
-  price_cents: number;
+  platform: string;
+  product_type: string;
+  price: number;
   avatar_url?: string;
   version: string;
   changelog: string;
   doc_content: string;
-  screenshots: string[];
 }) {
-  return request<{ product: Product; version: ProductVersion }>('/api/developer/products', {
+  return request<{ product: Product; version: ProductVersion }>('/developer/products', {
     method: 'POST',
     body: JSON.stringify(data),
   });
@@ -148,12 +148,13 @@ export function createProduct(data: {
 export function updateProduct(id: string, data: Partial<{
   name: string;
   description: string;
-  category: string;
-  price_cents: number;
+  platform: string;
+  product_type: string;
+  price: number;
   avatar_url: string;
 }>) {
-  return request<{ product: Product }>(`/api/developer/products/${id}`, {
-    method: 'PATCH',
+  return request<{ product: Product }>(`/developer/products/${id}`, {
+    method: 'PUT',
     body: JSON.stringify(data),
   });
 }
@@ -162,28 +163,27 @@ export function submitVersion(productId: string, data: {
   version: string;
   changelog: string;
   doc_content: string;
-  screenshots: string[];
 }) {
-  return request<{ version: ProductVersion }>(`/api/developer/products/${productId}/versions`, {
+  return request<{ version: ProductVersion }>(`/developer/products/${productId}/versions`, {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export function publishProduct(id: string) {
-  return request<{ product: Product }>(`/api/developer/products/${id}/publish`, {
+  return request<{ product: Product }>(`/developer/products/${id}/publish`, {
     method: 'POST',
   });
 }
 
 export function unpublishProduct(id: string) {
-  return request<{ product: Product }>(`/api/developer/products/${id}/unpublish`, {
+  return request<{ product: Product }>(`/developer/products/${id}/unpublish`, {
     method: 'POST',
   });
 }
 
 export function addScreenshots(productId: string, versionId: string, urls: string[]) {
-  return request<{ version: ProductVersion }>(`/api/developer/products/${productId}/versions/${versionId}/screenshots`, {
+  return request<{ version: ProductVersion }>(`/developer/products/${productId}/versions/${versionId}/screenshots`, {
     method: 'POST',
     body: JSON.stringify({ urls }),
   });
@@ -192,12 +192,12 @@ export function addScreenshots(productId: string, versionId: string, urls: strin
 export function uploadImage(file: File) {
   const formData = new FormData();
   formData.append('file', file);
-  return request<{ url: string }>('/api/upload', {
+  return request<{ url: string }>('/upload/image', {
     method: 'POST',
     body: formData,
   });
 }
 
 export function getStats() {
-  return request<DevStats>('/api/developer/stats');
+  return request<DevStats>('/developer/stats');
 }
