@@ -35,7 +35,7 @@ export default function HomePage() {
     const params: any = { limit: 12 };
     if (searchQuery) params.search = searchQuery;
     getProducts(params)
-      .then((res: any) => setProducts(res.data || []))
+      .then((res: any) => setProducts(Array.isArray(res) ? res : res.data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [searchQuery]);

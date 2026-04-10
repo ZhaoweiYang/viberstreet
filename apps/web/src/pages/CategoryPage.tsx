@@ -29,7 +29,7 @@ export default function CategoryPage() {
     if (productType) params.product_type = productType;
     getProducts(params)
       .then((res: any) => {
-        setProducts(res.data || []);
+        setProducts(Array.isArray(res) ? res : res.data || []);
         setTotalPages(res.pagination?.totalPages || 1);
       })
       .catch(() => {})
@@ -43,7 +43,7 @@ export default function CategoryPage() {
     if (productType) params.product_type = productType;
     getProducts(params)
       .then((res: any) => {
-        setProducts(res.data || []);
+        setProducts(Array.isArray(res) ? res : res.data || []);
         setPage(p);
         setTotalPages(res.pagination?.totalPages || 1);
       })
