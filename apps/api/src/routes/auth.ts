@@ -96,9 +96,13 @@ authRoutes.post('/verify-code', async (c) => {
   } else if (!user) {
     // User or Developer: auto-register with the correct role
     const id = generateId();
-    await c.env.DB.prepare(
-      'INSERT INTO users (id, email, name, role, email_verified) VALUES (?, ?, ?, ?, 1)'
-    ).bind(id, email, name || email.split('@')[0], portalRole).run();
+    try {
+      await c.env.DB.prepare(
+        'INSERT INTO users (id, email, name, role, email_verified) VALUES (?, ?, ?, ?, 1)'
+      ).bind(id, email, name || email.split('@')[0], portalRole).run();
+    } catch (dbErr: any) {
+      return c.json({ success: false, error: `Registration failed: ${dbErr.message}` }, 500);
+    }
     user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
   } else {
     await c.env.DB.prepare('UPDATE users SET email_verified = 1 WHERE id = ?').bind(user.id).run();
