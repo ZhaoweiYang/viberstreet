@@ -23,14 +23,18 @@ export default function ProductDetailPage() {
     if (!id) return;
     setLoading(true);
     getProduct(id)
-      .then((res) => {
-        setProduct(res.product);
-        setVersions(res.versions || []);
+      .then((r: any) => {
+        const res = r.data || r;
+        const p = res.product || res;
+        const v = res.versions || p.versions || [];
+        setProduct(p);
+        setVersions(v);
         setEditForm({
-          name: res.product.name,
-          description: res.product.description,
-          category: res.product.category,
-          price_cents: res.product.price_cents,
+          name: p.name,
+          description: p.description,
+          platform: p.platform || 'web',
+          product_type: p.product_type || 'browser',
+          price: p.price || 0,
         });
       })
       .catch(() => setError('Failed to load product'))

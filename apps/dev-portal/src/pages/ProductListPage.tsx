@@ -9,7 +9,7 @@ export default function ProductListPage() {
 
   useEffect(() => {
     getMyProducts()
-      .then((res) => setProducts(res.products))
+      .then((res: any) => setProducts(res.data || res.products || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);

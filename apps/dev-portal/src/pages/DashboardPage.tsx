@@ -11,9 +11,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     Promise.all([getStats(), getMyProducts()])
-      .then(([s, p]) => {
-        setStats(s);
-        setProducts(p.products.slice(0, 5));
+      .then(([s, p]: any[]) => {
+        setStats(s.data || s);
+        const list = p.data || p.products || [];
+        setProducts(list.slice(0, 5));
       })
       .catch(() => {})
       .finally(() => setLoading(false));
