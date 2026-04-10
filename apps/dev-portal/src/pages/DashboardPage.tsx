@@ -31,10 +31,10 @@ export default function DashboardPage() {
   }
 
   const statCards = [
-    { label: t('dashboard.total_products'), value: stats?.totalProducts ?? 0, icon: PackageIcon, gradient: 'from-indigo-600 to-indigo-500' },
-    { label: t('dashboard.published'), value: stats?.publishedProducts ?? 0, icon: CheckIcon, gradient: 'from-emerald-600 to-emerald-500' },
-    { label: t('dashboard.total_downloads'), value: stats?.totalDownloads ?? 0, icon: DownloadIcon, gradient: 'from-violet-600 to-violet-500' },
-    { label: t('dashboard.revenue'), value: `$${((stats?.totalRevenue ?? 0) / 100).toFixed(2)}`, icon: DollarIcon, gradient: 'from-amber-600 to-amber-500' },
+    { label: t('dashboard.total_products'), value: stats?.totalProducts ?? 0, icon: PackageIcon, gradient: 'from-indigo-600 to-indigo-500', glow: 'shadow-indigo-500/20' },
+    { label: t('dashboard.published'), value: stats?.publishedProducts ?? 0, icon: CheckIcon, gradient: 'from-emerald-600 to-emerald-500', glow: 'shadow-emerald-500/20' },
+    { label: t('dashboard.total_downloads'), value: stats?.totalDownloads ?? 0, icon: DownloadIcon, gradient: 'from-violet-600 to-violet-500', glow: 'shadow-violet-500/20' },
+    { label: t('dashboard.revenue'), value: `$${((stats?.totalRevenue ?? 0) / 100).toFixed(2)}`, icon: DollarIcon, gradient: 'from-amber-600 to-amber-500', glow: 'shadow-amber-500/20' },
   ];
 
   return (
@@ -44,12 +44,12 @@ export default function DashboardPage() {
         <p className="text-slate-400 mt-1">Here's an overview of your products</p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statCards.map((card) => (
-          <div key={card.label} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-colors">
+          <div key={card.label} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-all hover:shadow-lg hover:shadow-indigo-500/5 group">
             <div className="flex items-center gap-4">
-              <div className={`bg-gradient-to-br ${card.gradient} w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-lg`}>
+              <div className={`bg-gradient-to-br ${card.gradient} w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-lg ${card.glow}`}>
                 <card.icon />
               </div>
               <div>
@@ -65,7 +65,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <Link
           to="/products/new"
-          className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl p-6 hover:from-indigo-500 hover:to-violet-500 transition-all group"
+          className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl p-6 hover:from-indigo-500 hover:to-violet-500 transition-all group shadow-lg shadow-indigo-500/20"
         >
           <div className="flex items-center gap-3 mb-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,7 +77,7 @@ export default function DashboardPage() {
         </Link>
         <Link
           to="/products"
-          className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/50 transition-colors group"
+          className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/5 group"
         >
           <div className="flex items-center gap-3 mb-2">
             <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +91,7 @@ export default function DashboardPage() {
           href="https://docs.viberstreet.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-violet-500/50 transition-colors group"
+          className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-violet-500/50 transition-all hover:shadow-lg hover:shadow-violet-500/5 group"
         >
           <div className="flex items-center gap-3 mb-2">
             <svg className="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +107,7 @@ export default function DashboardPage() {
       <div className="bg-slate-900 border border-slate-800 rounded-2xl">
         <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-white">{t('dashboard.recent_products')}</h2>
-          <Link to="/products" className="text-sm text-indigo-400 hover:text-indigo-300 font-medium">
+          <Link to="/products" className="text-sm text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
             {t('dashboard.view_all')}
           </Link>
         </div>
@@ -116,7 +116,7 @@ export default function DashboardPage() {
             <p className="text-slate-500 mb-4">{t('products.no_products')}</p>
             <Link
               to="/products/new"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:from-indigo-500 hover:to-violet-500 transition-all"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:from-indigo-500 hover:to-violet-500 transition-all shadow-lg shadow-indigo-500/25"
             >
               {t('dashboard.create_new')}
             </Link>
@@ -127,7 +127,7 @@ export default function DashboardPage() {
               <Link
                 key={product.id}
                 to={`/products/${product.id}`}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-slate-800/50 transition-colors"
+                className="flex items-center gap-4 px-6 py-4 hover:bg-slate-800/30 transition-colors"
               >
                 <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-semibold text-sm">
                   {product.avatar_url ? (
