@@ -22,7 +22,7 @@ export default function ProductDetailPage() {
     description: '',
     platform: 'web',
     product_type: 'browser',
-    price: 0,
+    priceDisplay: '0',
   });
 
   const fetchData = () => {
@@ -40,7 +40,7 @@ export default function ProductDetailPage() {
           description: p.description,
           platform: p.platform || 'web',
           product_type: p.product_type || 'browser',
-          price: p.price || 0,
+          priceDisplay: p.price ? (p.price / 100).toFixed(2) : '0',
         });
       })
       .catch(() => setError(t('common.error')))
@@ -81,9 +81,16 @@ export default function ProductDetailPage() {
     if (!id) return;
     setActionLoading(true);
     try {
-      const res = await updateProduct(id, editForm);
-      setProduct(res.product);
+      const priceCents = Math.round(parseFloat(editForm.priceDisplay || '0') * 100);
+      await updateProduct(id, {
+        name: editForm.name,
+        description: editForm.description,
+        platform: editForm.platform,
+        product_type: editForm.product_type,
+        price: priceCents,
+      });
       setEditing(false);
+      fetchData();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -182,8 +189,10 @@ export default function ProductDetailPage() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">{t('create.price')}</label>
                 <input
                   type="number"
-                  value={editForm.price}
-                  onChange={(e) => setEditForm((f) => ({ ...f, price: parseInt(e.target.value) || 0 }))}
+                  value={editForm.priceDisplay}
+                  step="0.01"
+                  min="0"
+                  onChange={(e) => setEditForm((f) => ({ ...f, priceDisplay: e.target.value }))}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
