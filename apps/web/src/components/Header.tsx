@@ -61,12 +61,12 @@ export default function Header() {
                     onClick={() => setMenuOpen(!menuOpen)}
                     className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition"
                   >
-                    <span className="text-sm font-medium text-gray-700 hidden sm:block">{user.name}</span>
+                    <span className="text-sm font-medium text-gray-700 hidden sm:block">{user.name || user.email}</span>
                     <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center">
                       {user.avatar_url ? (
                         <img src={user.avatar_url} alt={user.name} className="w-7 h-7 rounded-full object-cover" />
                       ) : (
-                        <span className="text-purple-600 text-xs font-semibold">{user.name.charAt(0).toUpperCase()}</span>
+                        <span className="text-purple-600 text-xs font-semibold">{(user.name || user.email || '?').charAt(0).toUpperCase()}</span>
                       )}
                     </div>
                   </button>
