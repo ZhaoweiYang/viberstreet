@@ -73,19 +73,18 @@ export default function CreateProductPage() {
     setLoading(true);
     try {
       const priceCents = form.price ? Math.round(parseFloat(form.price) * 100) : 0;
-      const result = await createProduct({
+      const result: any = await createProduct({
         name: form.name,
         description: form.description,
         platform: form.platform,
         product_type: form.product_type,
-        price_cents: priceCents,
-        avatar_url: avatarUrl || undefined,
+        price: priceCents,
         version: form.version,
         changelog: form.changelog,
         doc_content: form.doc_content,
-        screenshots,
       });
-      navigate(`/products/${result.product.id}`);
+      const data = result.data || result;
+      navigate(`/products/${data.id || data.product?.id}`);
     } catch (err: any) {
       setError(err.message);
     } finally {
