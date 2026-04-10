@@ -14,8 +14,8 @@ export default function DashboardPage() {
   useEffect(() => {
     Promise.all([getStats(), getMyProducts()])
       .then(([s, p]: any[]) => {
-        setStats(s.data || s);
-        const list = p.data || p.products || [];
+        setStats(s);
+        const list = Array.isArray(p) ? p : (p.data || p.products || []);
         setProducts(list.slice(0, 5));
       })
       .catch(() => {})

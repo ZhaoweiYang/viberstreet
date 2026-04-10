@@ -11,7 +11,10 @@ export default function ProductListPage() {
 
   useEffect(() => {
     getMyProducts()
-      .then((res: any) => setProducts(res.data || res.products || []))
+      .then((res: any) => {
+        const list = Array.isArray(res) ? res : (res.data || res.products || []);
+        setProducts(list);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
