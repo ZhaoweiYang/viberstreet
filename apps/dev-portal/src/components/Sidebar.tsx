@@ -22,8 +22,8 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-indigo-950 text-white flex flex-col min-h-screen">
       <div className="p-6 border-b border-indigo-800">
-        <h1 className="text-xl font-bold">
-          <span className="text-indigo-400">Viber</span>Street
+        <h1 className="text-xl font-black tracking-tight">
+          <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">Street</span>
         </h1>
         <p className="text-xs text-indigo-300 mt-1">Developer Portal</p>
       </div>

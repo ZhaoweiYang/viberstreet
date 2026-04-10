@@ -22,12 +22,9 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">VS</span>
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-              VibeStreet
+          <Link to="/" className="shrink-0 group">
+            <span className="text-2xl font-black tracking-tight">
+              <span className="bg-gradient-to-r from-violet-600 via-purple-500 to-fuchsia-500 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-500 to-pink-500 bg-clip-text text-transparent">Street</span>
             </span>
           </Link>
 

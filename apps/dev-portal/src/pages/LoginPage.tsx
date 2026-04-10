@@ -53,8 +53,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-950 via-purple-900 to-indigo-900 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">
-            <span className="text-indigo-400">Viber</span>Street
+          <h1 className="text-3xl font-black tracking-tight">
+            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">Street</span>
           </h1>
           <p className="text-indigo-200 mt-2">{t('login.subtitle')}</p>
         </div>

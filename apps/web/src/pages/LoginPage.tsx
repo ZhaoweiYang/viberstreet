@@ -58,10 +58,10 @@ export default function LoginPage() {
     <div className="min-h-[calc(100vh-10rem)] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold">VS</span>
-            </div>
+          <Link to="/" className="inline-block">
+            <span className="text-3xl font-black tracking-tight">
+              <span className="bg-gradient-to-r from-violet-600 via-purple-500 to-fuchsia-500 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-500 to-pink-500 bg-clip-text text-transparent">Street</span>
+            </span>
           </Link>
           <h1 className="mt-4 text-2xl font-bold text-gray-900">{t('login.title')}</h1>
         </div>

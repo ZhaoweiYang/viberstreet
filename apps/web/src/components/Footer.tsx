@@ -10,11 +10,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">VS</span>
-              </div>
-              <span className="text-lg font-bold text-gray-900">VibeStreet</span>
+            <div className="mb-3">
+              <span className="text-xl font-black tracking-tight">
+                <span className="bg-gradient-to-r from-violet-600 via-purple-500 to-fuchsia-500 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-500 to-pink-500 bg-clip-text text-transparent">Street</span>
+              </span>
             </div>
             <p className="text-sm text-gray-500">{t('footer.tagline')}</p>
           </div>

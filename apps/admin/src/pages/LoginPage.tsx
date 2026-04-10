@@ -58,7 +58,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white">
-            <span className="text-rose-500">Viber</span>Street
+            <span className="bg-gradient-to-r from-rose-400 via-pink-400 to-fuchsia-400 bg-clip-text text-transparent">Viber</span><span className="bg-gradient-to-r from-fuchsia-400 to-purple-400 bg-clip-text text-transparent">Street</span>
           </h1>
           <p className="text-slate-400 mt-2">{t('login.subtitle')}</p>
         </div>
