@@ -5,11 +5,16 @@ import { useAuth } from '../lib/auth';
 import { useI18n } from '../lib/i18n';
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
+
+  if (user) {
+    navigate(redirect, { replace: true });
+    return null;
+  }
 
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
