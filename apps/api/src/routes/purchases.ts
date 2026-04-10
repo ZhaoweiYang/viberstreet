@@ -94,9 +94,11 @@ purchaseRoutes.get('/my-purchases', async (c) => {
 
   const purchases = await c.env.DB.prepare(`
     SELECT pur.*, p.name as product_name, p.slug as product_slug,
-           p.avatar_url as product_avatar, p.category, pv.version
+           p.avatar_url as product_avatar, p.description, p.platform, p.product_type,
+           u.name as developer_name, pv.version
     FROM purchases pur
     JOIN products p ON pur.product_id = p.id
+    JOIN users u ON p.developer_id = u.id
     JOIN product_versions pv ON pur.version_id = pv.id
     WHERE pur.user_id = ?
     ORDER BY pur.created_at DESC
