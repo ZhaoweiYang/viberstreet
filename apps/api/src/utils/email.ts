@@ -3,8 +3,11 @@ export async function sendEmail(
   to: string,
   subject: string,
   html: string
-): Promise<boolean> {
+): Promise<{ ok: boolean; error?: string }> {
   try {
+    if (!apiKey) {
+      return { ok: false, error: 'RESEND_API_KEY is not configured' };
+    }
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -18,10 +21,13 @@ export async function sendEmail(
         html,
       }),
     });
-    return res.ok;
-  } catch {
-    console.error('Failed to send email');
-    return false;
+    if (!res.ok) {
+      const body = await res.text();
+      return { ok: false, error: `Resend API ${res.status}: ${body}` };
+    }
+    return { ok: true };
+  } catch (err: any) {
+    return { ok: false, error: err.message || 'Network error' };
   }
 }
 

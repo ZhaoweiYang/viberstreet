@@ -44,12 +44,16 @@ authRoutes.post('/send-code', async (c) => {
   ).bind(id, email, code, type, expiresAt).run();
 
   // Send email
-  await sendEmail(
+  const emailResult = await sendEmail(
     c.env.RESEND_API_KEY,
     email,
     'Your Viber Street Verification Code',
     verificationEmailHtml(code)
   );
+
+  if (!emailResult.ok) {
+    return c.json({ success: false, error: `Failed to send email: ${emailResult.error}` }, 500);
+  }
 
   return c.json({ success: true });
 });
