@@ -16,7 +16,8 @@ export type ProductType =
   | 'office'
   | 'erp'
   | 'web3-wallet'
-  | 'email-client';
+  | 'email-client'
+  | 'dao-message';
 
 export const PLATFORM_LABELS: Record<Platform, string> = {
   'web': 'Web',
@@ -43,6 +44,7 @@ export const PRODUCT_TYPE_LABELS: Record<ProductType, string> = {
   'erp': 'ERP',
   'web3-wallet': 'Web3 Wallet',
   'email-client': 'Email Client',
+  'dao-message': 'DAO Message',
 };
 
 export const PRODUCT_TYPE_ICONS: Record<ProductType, string> = {
@@ -54,6 +56,7 @@ export const PRODUCT_TYPE_ICONS: Record<ProductType, string> = {
   'erp': '🏢',
   'web3-wallet': '💎',
   'email-client': '📧',
+  'dao-message': '💬',
 };
 
 // ========== Database Models ==========

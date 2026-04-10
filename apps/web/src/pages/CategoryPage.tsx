@@ -7,7 +7,7 @@ import ProductCard from '../components/ProductCard';
 const PLATFORMS = ['web', 'ios', 'android', 'macos', 'windows'];
 const PLATFORM_ICONS: Record<string, string> = { web: '🌐', ios: '🍎', android: '🤖', macos: '💻', windows: '🪟' };
 
-const PRODUCT_TYPES = ['browser', 'vpn', 'input-method', 'finance', 'office', 'erp', 'web3-wallet', 'email-client'];
+const PRODUCT_TYPES = ['browser', 'vpn', 'input-method', 'finance', 'office', 'erp', 'web3-wallet', 'email-client', 'dao-message'];
 const TYPE_ICONS: Record<string, string> = {
   browser: '🌍', vpn: '🔒', 'input-method': '⌨️', finance: '💰',
   office: '📄', erp: '🏢', 'web3-wallet': '💎', 'email-client': '📧',

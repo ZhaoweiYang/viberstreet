@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS products (
   avatar_url TEXT,
   description TEXT NOT NULL,
   platform TEXT NOT NULL CHECK(platform IN ('web','ios','android','macos','windows')),
-  product_type TEXT NOT NULL CHECK(product_type IN ('browser','vpn','input-method','finance','office','erp','web3-wallet','email-client')),
+  product_type TEXT NOT NULL CHECK(product_type IN ('browser','vpn','input-method','finance','office','erp','web3-wallet','email-client','dao-message')),
   price INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'published', 'unpublished')),
   current_version_id TEXT,

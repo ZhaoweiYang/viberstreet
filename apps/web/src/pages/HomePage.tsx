@@ -3,25 +3,10 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getProducts } from '../lib/api';
 import { useI18n } from '../lib/i18n';
 import ProductCard from '../components/ProductCard';
+import { PlatformIcon, ProductTypeIcon } from '../components/Icons';
 
-const PLATFORMS = [
-  { key: 'web', icon: '🌐' },
-  { key: 'ios', icon: '🍎' },
-  { key: 'android', icon: '🤖' },
-  { key: 'macos', icon: '💻' },
-  { key: 'windows', icon: '🪟' },
-];
-
-const PRODUCT_TYPES = [
-  { key: 'browser', icon: '🌍' },
-  { key: 'vpn', icon: '🔒' },
-  { key: 'input-method', icon: '⌨️' },
-  { key: 'finance', icon: '💰' },
-  { key: 'office', icon: '📄' },
-  { key: 'erp', icon: '🏢' },
-  { key: 'web3-wallet', icon: '💎' },
-  { key: 'email-client', icon: '📧' },
-];
+const PLATFORMS = ['web', 'ios', 'android', 'macos', 'windows'];
+const PRODUCT_TYPES = ['browser', 'vpn', 'input-method', 'finance', 'office', 'erp', 'web3-wallet', 'email-client', 'dao-message'];
 
 export default function HomePage() {
   const { t } = useI18n();
@@ -63,12 +48,12 @@ export default function HomePage() {
           <div className="flex flex-wrap gap-3">
             {PLATFORMS.map((p) => (
               <Link
-                key={p.key}
-                to={`/browse/${p.key}`}
-                className="flex items-center gap-2 px-5 py-3 bg-slate-800 border border-slate-700 rounded-xl hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300 group"
+                key={p}
+                to={`/browse/${p}`}
+                className="flex items-center gap-3 px-5 py-3 bg-slate-800 border border-slate-700 rounded-xl hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300 group"
               >
-                <span className="text-2xl">{p.icon}</span>
-                <span className="font-medium text-slate-300 group-hover:text-violet-400 transition">{t(`platform.${p.key}`)}</span>
+                <span className="text-slate-400 group-hover:text-violet-400 transition"><PlatformIcon platform={p} size="lg" /></span>
+                <span className="font-medium text-slate-300 group-hover:text-violet-400 transition">{t(`platform.${p}`)}</span>
               </Link>
             ))}
           </div>
@@ -80,12 +65,12 @@ export default function HomePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
             {PRODUCT_TYPES.map((pt) => (
               <Link
-                key={pt.key}
-                to={`/browse/all/${pt.key}`}
-                className="flex flex-col items-center gap-2 p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/10 transition-all duration-300 group text-center"
+                key={pt}
+                to={`/browse/all/${pt}`}
+                className="flex flex-col items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/10 transition-all duration-300 group text-center"
               >
-                <span className="text-3xl">{pt.icon}</span>
-                <span className="text-sm font-medium text-slate-400 group-hover:text-violet-400 transition">{t(`product_type.${pt.key}`)}</span>
+                <span className="text-slate-400 group-hover:text-violet-400 transition"><ProductTypeIcon type={pt} size="lg" /></span>
+                <span className="text-sm font-medium text-slate-400 group-hover:text-violet-400 transition">{t(`product_type.${pt}`)}</span>
               </Link>
             ))}
           </div>

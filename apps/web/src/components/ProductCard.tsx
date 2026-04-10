@@ -1,12 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '../lib/i18n';
-
-const PLATFORM_ICONS: Record<string, string> = { web: '🌐', ios: '🍎', android: '🤖', macos: '💻', windows: '🪟' };
-const TYPE_ICONS: Record<string, string> = {
-  browser: '🌍', vpn: '🔒', 'input-method': '⌨️', finance: '💰',
-  office: '📄', erp: '🏢', 'web3-wallet': '💎', 'email-client': '📧',
-};
+import { PlatformIcon, ProductTypeIcon } from './Icons';
 
 export default function ProductCard({ product }: { product: any }) {
   const { t } = useI18n();
@@ -24,7 +19,7 @@ export default function ProductCard({ product }: { product: any }) {
             {product.avatar_url ? (
               <img src={product.avatar_url} alt={product.name} className="w-14 h-14 rounded-2xl object-cover" />
             ) : (
-              <span>{TYPE_ICONS[product.product_type] || '📦'}</span>
+              <ProductTypeIcon type={product.product_type} size="lg" />
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -39,10 +34,10 @@ export default function ProductCard({ product }: { product: any }) {
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-800">
           <div className="flex items-center gap-1.5">
             <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-slate-800 px-2 py-1 rounded-lg">
-              {PLATFORM_ICONS[product.platform] || '🌐'} {t(`platform.${product.platform}`)}
+              <PlatformIcon platform={product.platform} /> {t(`platform.${product.platform}`)}
             </span>
             <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-slate-800 px-2 py-1 rounded-lg">
-              {TYPE_ICONS[product.product_type] || '📦'} {t(`product_type.${product.product_type}`)}
+              <ProductTypeIcon type={product.product_type} /> {t(`product_type.${product.product_type}`)}
             </span>
           </div>
           <div className="flex items-center gap-3">
