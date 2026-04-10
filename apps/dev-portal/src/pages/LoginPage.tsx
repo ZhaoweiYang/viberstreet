@@ -66,7 +66,7 @@ export default function LoginPage() {
           <p className="text-slate-400 mt-2">{t('login.subtitle')}</p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl shadow-indigo-500/5 p-8">
           <h2 className="text-xl font-semibold text-white mb-6">{t('login.title')}</h2>
 
           {error && (
@@ -89,7 +89,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading || !email}
-                className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-2.5 rounded-xl font-medium hover:from-indigo-500 hover:to-violet-500 transition-all disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-2.5 rounded-xl font-medium hover:from-indigo-500 hover:to-violet-500 transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/25"
               >
                 {loading ? '...' : t('login.send_code')}
               </button>
@@ -113,14 +113,14 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading || code.length !== 6}
-                className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-2.5 rounded-xl font-medium hover:from-indigo-500 hover:to-violet-500 transition-all disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-2.5 rounded-xl font-medium hover:from-indigo-500 hover:to-violet-500 transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/25"
               >
                 {loading ? '...' : t('login.verify')}
               </button>
               <button
                 type="button"
                 onClick={() => { setCodeSent(false); setCode(''); setError(''); }}
-                className="w-full text-sm text-slate-500 hover:text-slate-300"
+                className="w-full text-sm text-slate-500 hover:text-slate-300 transition-colors"
               >
                 {t('common.back')}
               </button>
