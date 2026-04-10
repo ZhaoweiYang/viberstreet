@@ -21,8 +21,9 @@ CREATE TABLE IF NOT EXISTS products (
   slug TEXT UNIQUE NOT NULL,
   avatar_url TEXT,
   description TEXT NOT NULL,
-  platform TEXT NOT NULL CHECK(platform IN ('web','ios','android','macos','windows')),
-  product_type TEXT NOT NULL CHECK(product_type IN ('browser','vpn','input-method','finance','office','erp','web3-wallet','email-client','dao-message')),
+  platform TEXT NOT NULL DEFAULT 'web',
+  platforms TEXT NOT NULL DEFAULT '["web"]',
+  product_type TEXT NOT NULL DEFAULT 'browser',
   price INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'published', 'unpublished')),
   current_version_id TEXT,
@@ -73,6 +74,25 @@ CREATE TABLE IF NOT EXISTS verification_codes (
   type TEXT NOT NULL CHECK(type IN ('login', 'register')),
   expires_at TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Per-platform version docs
+CREATE TABLE IF NOT EXISTS product_version_docs (
+  id TEXT PRIMARY KEY,
+  version_id TEXT NOT NULL REFERENCES product_versions(id),
+  platform TEXT NOT NULL,
+  doc_content TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(version_id, platform)
+);
+
+-- Per-platform screenshots
+CREATE TABLE IF NOT EXISTS product_platform_screenshots (
+  id TEXT PRIMARY KEY,
+  version_doc_id TEXT NOT NULL REFERENCES product_version_docs(id),
+  url TEXT NOT NULL,
+  sort_order INTEGER NOT NULL DEFAULT 0
 );
 
 -- Indexes

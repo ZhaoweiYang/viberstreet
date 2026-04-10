@@ -100,23 +100,50 @@ productRoutes.get('/:slug', async (c) => {
     'SELECT * FROM product_screenshots WHERE product_version_id = ? ORDER BY sort_order'
   ).bind(product.current_version_id).all();
 
+  // Get per-platform docs for current version
+  const platformDocs = await c.env.DB.prepare(
+    'SELECT * FROM product_version_docs WHERE version_id = ? ORDER BY platform'
+  ).bind(product.current_version_id).all();
+
+  // Get per-platform screenshots
+  const docsWithScreenshots = await Promise.all(
+    (platformDocs.results || []).map(async (d: Record<string, unknown>) => {
+      const pScreenshots = await c.env.DB.prepare(
+        'SELECT * FROM product_platform_screenshots WHERE version_doc_id = ? ORDER BY sort_order'
+      ).bind(d.id).all();
+      return { ...d, screenshots: pScreenshots.results || [] };
+    })
+  );
+
+  // Parse platforms
+  let platformsList: string[] = [];
+  try {
+    platformsList = JSON.parse(product.platforms as string || '[]');
+  } catch {
+    platformsList = [product.platform as string || 'web'];
+  }
+
   return c.json({
     success: true,
     data: {
       ...product,
+      platforms_list: platformsList,
       versions: versions.results || [],
       screenshots: screenshots.results || [],
+      platform_docs: docsWithScreenshots,
     },
   });
 });
 
-// Download product (requires auth)
+// Download product (requires auth, optional platform param)
 productRoutes.post('/:slug/download', requireAuth, async (c) => {
   const user = c.get('user');
   const slug = c.req.param('slug');
+  const body = await c.req.json().catch(() => ({})) as { platform?: string };
+  const requestedPlatform = body.platform;
 
   const product = await c.env.DB.prepare(`
-    SELECT p.*, pv.doc_content, pv.version
+    SELECT p.*, pv.doc_content, pv.version, pv.id as version_id
     FROM products p
     JOIN product_versions pv ON p.current_version_id = pv.id
     WHERE p.slug = ? AND p.status = 'published'
@@ -137,6 +164,20 @@ productRoutes.post('/:slug/download', requireAuth, async (c) => {
     }
   }
 
+  // Try to get platform-specific doc
+  let docContent = product.doc_content as string;
+  let downloadPlatform = requestedPlatform || '';
+
+  if (requestedPlatform && product.version_id) {
+    const platformDoc = await c.env.DB.prepare(
+      'SELECT doc_content FROM product_version_docs WHERE version_id = ? AND platform = ?'
+    ).bind(product.version_id, requestedPlatform).first();
+    if (platformDoc) {
+      docContent = platformDoc.doc_content as string;
+      downloadPlatform = requestedPlatform;
+    }
+  }
+
   // Increment download count
   await c.env.DB.prepare(
     'UPDATE products SET download_count = download_count + 1 WHERE id = ?'
@@ -145,11 +186,11 @@ productRoutes.post('/:slug/download', requireAuth, async (c) => {
   // Send doc to user's email
   const userRecord = await c.env.DB.prepare('SELECT email FROM users WHERE id = ?').bind(user.sub).first();
   if (userRecord?.email) {
-    await sendEmail(
+    sendEmail(
       c.env.RESEND_API_KEY,
       userRecord.email as string,
       `Your Viber Street Doc: ${product.name}`,
-      docDeliveryEmailHtml(product.name as string, product.doc_content as string)
+      docDeliveryEmailHtml(product.name as string, docContent)
     );
   }
 
@@ -158,7 +199,8 @@ productRoutes.post('/:slug/download', requireAuth, async (c) => {
     data: {
       name: product.name,
       version: product.version,
-      doc_content: product.doc_content,
+      platform: downloadPlatform,
+      doc_content: docContent,
     },
   });
 });

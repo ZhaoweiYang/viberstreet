@@ -26,37 +26,64 @@ devRoutes.get('/products', async (c) => {
   return c.json({ success: true, data: products.results || [] });
 });
 
-// Create a new product
+// Create a new product (supports multiple platforms)
 devRoutes.post('/products', async (c) => {
   const user = c.get('user');
   const body = await c.req.json();
-  const { name, description, platform, product_type, price = 0, version, changelog = '', doc_content } = body;
+  const { name, description, platforms, product_type, price = 0, version, changelog = '', platform_docs } = body;
 
-  if (!name || !description || !platform || !product_type || !doc_content || !version) {
-    return c.json({ success: false, error: 'Missing required fields: name, description, platform, product_type, version, doc_content' }, 400);
+  // platforms: string[] e.g. ["web", "ios", "android"]
+  // platform_docs: { [platform]: { doc_content: string, description?: string } }
+  const platformList: string[] = Array.isArray(platforms) ? platforms : (body.platform ? [body.platform] : []);
+
+  if (!name || !description || !product_type || !version || platformList.length === 0) {
+    return c.json({ success: false, error: 'Missing required fields: name, description, platforms, product_type, version' }, 400);
+  }
+
+  // Validate each platform has doc_content
+  const docs = platform_docs || {};
+  // Backward compat: if single doc_content provided, use it for all platforms
+  if (body.doc_content && !platform_docs) {
+    for (const p of platformList) {
+      docs[p] = { doc_content: body.doc_content, description: '' };
+    }
+  }
+
+  for (const p of platformList) {
+    if (!docs[p]?.doc_content) {
+      return c.json({ success: false, error: `Missing documentation for platform: ${p}` }, 400);
+    }
   }
 
   const productId = generateId();
   const versionId = generateId();
   let slug = slugify(name);
 
-  // Ensure unique slug
   const existing = await c.env.DB.prepare('SELECT id FROM products WHERE slug = ?').bind(slug).first();
   if (existing) {
     slug = `${slug}-${productId.slice(0, 6)}`;
   }
 
-  // Create product
+  // Create product with platforms JSON array
   await c.env.DB.prepare(`
-    INSERT INTO products (id, developer_id, name, slug, description, category, platform, product_type, price, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft')
-  `).bind(productId, user.sub, name, slug, description, 'other', platform, product_type, price).run();
+    INSERT INTO products (id, developer_id, name, slug, description, category, platform, platforms, product_type, price, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft')
+  `).bind(productId, user.sub, name, slug, description, 'other', platformList[0], JSON.stringify(platformList), product_type, price).run();
 
-  // Create first version
+  // Create version (doc_content = first platform's doc for backward compat)
   await c.env.DB.prepare(`
     INSERT INTO product_versions (id, product_id, version, changelog, doc_content, status)
     VALUES (?, ?, ?, ?, ?, 'pending_review')
-  `).bind(versionId, productId, version, changelog, doc_content).run();
+  `).bind(versionId, productId, version, changelog, docs[platformList[0]].doc_content).run();
+
+  // Create per-platform docs
+  for (const p of platformList) {
+    const docId = generateId();
+    await c.env.DB.prepare(`
+      INSERT INTO product_version_docs (id, version_id, platform, doc_content, description)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(docId, versionId, p, docs[p].doc_content, docs[p].description || '').run();
+  }
 
   return c.json({
     success: true,
@@ -81,19 +108,43 @@ devRoutes.get('/products/:id', async (c) => {
     'SELECT * FROM product_versions WHERE product_id = ? ORDER BY created_at DESC'
   ).bind(id).all();
 
-  // Get screenshots per version
-  const versionsWithScreenshots = await Promise.all(
+  // Get per-platform docs and screenshots per version
+  const versionsWithDocs = await Promise.all(
     (versions.results || []).map(async (v: Record<string, unknown>) => {
       const screenshots = await c.env.DB.prepare(
         'SELECT * FROM product_screenshots WHERE product_version_id = ? ORDER BY sort_order'
       ).bind(v.id).all();
-      return { ...v, screenshots: screenshots.results || [] };
+
+      // Get per-platform docs
+      const platformDocs = await c.env.DB.prepare(
+        'SELECT * FROM product_version_docs WHERE version_id = ? ORDER BY platform'
+      ).bind(v.id).all();
+
+      // Get per-platform screenshots
+      const docsWithScreenshots = await Promise.all(
+        (platformDocs.results || []).map(async (d: Record<string, unknown>) => {
+          const pScreenshots = await c.env.DB.prepare(
+            'SELECT * FROM product_platform_screenshots WHERE version_doc_id = ? ORDER BY sort_order'
+          ).bind(d.id).all();
+          return { ...d, screenshots: pScreenshots.results || [] };
+        })
+      );
+
+      return { ...v, screenshots: screenshots.results || [], platform_docs: docsWithScreenshots };
     })
   );
 
+  // Parse platforms JSON
+  let parsedPlatforms: string[] = [];
+  try {
+    parsedPlatforms = JSON.parse(product.platforms as string || '[]');
+  } catch {
+    parsedPlatforms = [product.platform as string || 'web'];
+  }
+
   return c.json({
     success: true,
-    data: { ...product, versions: versionsWithScreenshots },
+    data: { ...product, platforms_list: parsedPlatforms, versions: versionsWithDocs },
   });
 });
 
@@ -132,14 +183,15 @@ devRoutes.put('/products/:id', async (c) => {
   return c.json({ success: true });
 });
 
-// Submit a new version
+// Submit a new version (supports per-platform docs)
 devRoutes.post('/products/:id/versions', async (c) => {
   const user = c.get('user');
   const id = c.req.param('id');
-  const { version, changelog = '', doc_content } = await c.req.json();
+  const body = await c.req.json();
+  const { version, changelog = '', platform_docs, doc_content } = body;
 
-  if (!version || !doc_content) {
-    return c.json({ success: false, error: 'Missing required fields: version, doc_content' }, 400);
+  if (!version) {
+    return c.json({ success: false, error: 'Missing required field: version' }, 400);
   }
 
   const product = await c.env.DB.prepare(
@@ -148,6 +200,22 @@ devRoutes.post('/products/:id/versions', async (c) => {
 
   if (!product) {
     return c.json({ success: false, error: 'Product not found' }, 404);
+  }
+
+  // Get product's platforms
+  let platformList: string[] = [];
+  try {
+    platformList = JSON.parse(product.platforms as string || '[]');
+  } catch {
+    platformList = [product.platform as string || 'web'];
+  }
+
+  // Build docs map
+  const docs = platform_docs || {};
+  if (doc_content && !platform_docs) {
+    for (const p of platformList) {
+      docs[p] = { doc_content, description: '' };
+    }
   }
 
   // Check duplicate version
@@ -160,10 +228,23 @@ devRoutes.post('/products/:id/versions', async (c) => {
   }
 
   const versionId = generateId();
+  const firstDocContent = docs[platformList[0]]?.doc_content || doc_content || '';
+
   await c.env.DB.prepare(`
     INSERT INTO product_versions (id, product_id, version, changelog, doc_content, status)
     VALUES (?, ?, ?, ?, ?, 'pending_review')
-  `).bind(versionId, id, version, changelog, doc_content).run();
+  `).bind(versionId, id, version, changelog, firstDocContent).run();
+
+  // Create per-platform docs
+  for (const p of platformList) {
+    if (docs[p]?.doc_content) {
+      const docId = generateId();
+      await c.env.DB.prepare(`
+        INSERT INTO product_version_docs (id, version_id, platform, doc_content, description)
+        VALUES (?, ?, ?, ?, ?)
+      `).bind(docId, versionId, p, docs[p].doc_content, docs[p].description || '').run();
+    }
+  }
 
   return c.json({ success: true, data: { id: versionId } }, 201);
 });
