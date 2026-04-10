@@ -40,7 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (tokenState) {
       getMe()
-        .then((u) => {
+        .then((res: any) => {
+          const u = res.data || res;
           if (u.role !== 'developer' && u.role !== 'admin') {
             logout();
           } else {
